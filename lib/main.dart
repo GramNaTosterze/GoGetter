@@ -1,11 +1,7 @@
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import 'src/widgets/game_app.dart';
+
 void main() {
-  final game = FlameGame();
-  runApp(
-      GameWidget(
-          game: game,
-      ),
-  );
+  runApp(const GameApp());
 }
