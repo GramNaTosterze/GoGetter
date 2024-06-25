@@ -10,7 +10,7 @@ class BoardBlock extends RectangleComponent with HasGameReference<GoGetter>, Col
   @protected
   final Color color;
   late ShapeHitbox hitbox;
-  bool isEmpty = true;
+  BoardBlock? block;
   BoardBlock({
     required super.position,
     required this.color
@@ -26,5 +26,9 @@ class BoardBlock extends RectangleComponent with HasGameReference<GoGetter>, Col
     hitbox = RectangleHitbox()
       ..renderShape = false;
     add(hitbox);
+  }
+
+  bool isEmpty() {
+    return block == null;
   }
 }

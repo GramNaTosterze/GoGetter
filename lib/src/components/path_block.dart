@@ -20,11 +20,22 @@ class PathBlock extends BoardBlock with DragCallbacks, TapCallbacks {
   void returnToStartingPosition() {
     position = _startPos.clone();
   }
+  void swap(BoardBlock other) {
+    BoardBlock? tmp = block;
+
+    position = other.position.clone();
+    block?.block = other;
+    block = other.block;
+
+    other.position = _startPos.clone();
+    other.block?.block = this;
+    other.block = tmp;
+  }
 
   BoardBlock getClosestBoardBlock() {
     PositionComponent closest = activeCollisions.first;
     for(var collision in activeCollisions) {
-      if (closest.distance(this) > collision.distance(this) && (collision as BoardBlock).isEmpty) { //change to mouse
+      if (closest.distance(this) > collision.distance(this)) {
         closest = collision;
       }
     }
@@ -64,22 +75,31 @@ class PathBlock extends BoardBlock with DragCallbacks, TapCallbacks {
     super.onDragStart(event);
     priority = 10;
     _startPos = position.clone();
-    if(isColliding) {
-      BoardBlock closest = getClosestBoardBlock();
-      closest.isEmpty = true;
-    }
   }
   @override void onDragEnd(DragEndEvent event) {
     super.onDragEnd(event);
     priority = 0;
+    var block = this.block;
     if(isColliding) {
       BoardBlock closest = getClosestBoardBlock();
-      if(!closest.isEmpty) {
-        returnToStartingPosition();
+      if(!closest.isEmpty()) {
+        if(closest.block != this) {
+          swap(closest.block!);
+        } else {
+          returnToStartingPosition();
+        }
       } else {
-        position = closest.position;
-        closest.isEmpty = false;
+        position = closest.position.clone();
+
+        if(block != null) {
+          block.block = null;
+        }
+        closest.block = this;
+        this.block = closest;
       }
+    } else if (block != null) {
+      block.block = null;
+      this.block = null;
     }
   }
 
