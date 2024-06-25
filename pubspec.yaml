@@ -20,3 +20,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/block1.png
+    - assets/images/block2.png
+    - assets/images/block3.png
+    - assets/images/block4.png
+    - assets/images/block5.png
+    - assets/images/block6.png
+    - assets/images/block7.png
+    - assets/images/block8.png
+    - assets/images/block9.png
+    - assets/images/board.png

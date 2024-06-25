@@ -61,7 +61,14 @@ class GameBoard extends RectangleComponent with HasGameReference<GoGetter> {
     super.onLoad();
     size = Vector2(game.width, game.height);
 
-    Vector2 blockSize = size / 6;
+    add(SpriteComponent(
+        sprite: Sprite(await game.images.load('board.png')),
+        position: size/2,
+        size: size*0.8,
+        anchor: Anchor.center
+    ));
+
+    Vector2 blockSize = size / 6 + Vector2(10, 10);
     Vector2 start = size / 2 - blockSize;
     blocks = [
       for (int i = 0; i < 9; i++)
@@ -70,7 +77,7 @@ class GameBoard extends RectangleComponent with HasGameReference<GoGetter> {
               position +
               Vector2(blockSize.x * (i % 3).toDouble(),
                   blockSize.y * (i ~/ 3).toDouble()),
-          color: const Color(0xff5c5c5c),
+          color: const Color(0xff157005).withOpacity(0.8),
         )
     ];
 

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 
 import 'components/components.dart';
@@ -43,7 +42,7 @@ class GoGetter extends FlameGame
     world.add(GameBoard());
 
     for(int i = 0; i < 9; i++) {
-      world.add(PathBlock(
+      world.add(PathBlock(i+1, //blockType
         position: Vector2(200.0*i, 1500.0),
       ));
     }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -11,7 +10,8 @@ import 'block.dart';
 class PathBlock extends BoardBlock with DragCallbacks, TapCallbacks {
   Vector2 _startPos;
   late PositionComponent pathComponent;
-  PathBlock({
+  final int _blockType;
+  PathBlock(this._blockType, {
     required super.position,
 }) : _startPos = position!, super(
     color: const Color(0xff255ac2),
@@ -45,11 +45,12 @@ class PathBlock extends BoardBlock with DragCallbacks, TapCallbacks {
     super.onLoad();
     hitbox.collisionType = CollisionType.passive;
 
-    // tmp - replace with image
-    pathComponent = RectangleComponent(
-      position: size/2,
-      size: size/3,
-      paint: Paint()..color = const Color(0xffd2d213),
+
+    pathComponent = SpriteComponent(
+        sprite: Sprite(await game.images.load('block$_blockType.png')),
+        position: size/2,
+        size: size,
+        anchor: Anchor.center
     );
     add(pathComponent);
   }
