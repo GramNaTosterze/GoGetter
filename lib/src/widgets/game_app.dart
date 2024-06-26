@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../go_getter.dart';
 import '../config.dart';
 import 'overlay_screen.dart';
-import 'pause_menu.dart'; // Import PauseMenu
+import 'pause_menu.dart';
 
 class GameApp extends StatefulWidget {
   const GameApp({super.key});
@@ -36,20 +36,18 @@ class _GameAppState extends State<GameApp> {
   }
 
   void _resumeGame() {
-    Navigator.of(context).pop(); // Zamknij okno pauzy
+    Navigator.of(context).pop();
   }
 
   void _restartGame() {
-    Navigator.of(context).pop(); // Zamknij okno pauzy
-    // Wywołanie metody reset w grze
+    Navigator.of(context).pop();
     //game.reset();
   }
 
   void _exitGame() {
-    Navigator.of(context).pop(); // Zamknij okno pauzy
-    // Dodaj logikę wychodzenia z gry tutaj
-    Navigator.of(context).pushReplacementNamed('/'); // Przykład: powrót do menu głównego
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +95,7 @@ class _GameAppState extends State<GameApp> {
                           ),
                         ),
                         Align(
-                          alignment: Alignment.topLeft, // Ustawienie przycisku w lewym górnym rogu
+                          alignment: Alignment.topLeft,
                           child: IconButton(
                             icon: const Icon(Icons.pause),
                             onPressed: _showPauseMenu,

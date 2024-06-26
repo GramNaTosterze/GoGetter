@@ -15,23 +15,23 @@ class PauseMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Pauza'),
+      title: const Text('Pause'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ElevatedButton(
             onPressed: onResume,
-            child: const Text('Wznów grę'),
+            child: const Text('Resume'),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: onRestart,
-            child: const Text('Restartuj grę'),
+            child: const Text('Restart'),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: onExit,
-            child: const Text('Wyjdź z gry'),
+            child: const Text('Exit'),
           ),
         ],
       ),

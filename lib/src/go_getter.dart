@@ -3,21 +3,21 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
 
 import 'components/components.dart';
 import 'config.dart';
 
-enum PlayState {welcome, playing, levelCompleted}
+enum PlayState { welcome, playing, levelCompleted }
 
-class GoGetter extends FlameGame
-    with HasCollisionDetection {
+class GoGetter extends FlameGame with HasCollisionDetection {
   GoGetter()
-    : super(
-      camera: CameraComponent.withFixedResolution(
-        width: gameWidth,
-        height: gameHeight,
-      ),
-    );
+      : super(
+    camera: CameraComponent.withFixedResolution(
+      width: gameWidth,
+      height: gameHeight,
+    ),
+  );
 
   double get width => size.x;
   double get height => size.y;
@@ -26,7 +26,7 @@ class GoGetter extends FlameGame
   PlayState get playState => _playState;
   set playState(PlayState playState) {
     _playState = playState;
-    switch(playState) {
+    switch (playState) {
       case PlayState.welcome:
       case PlayState.levelCompleted:
       case PlayState.playing:
@@ -38,18 +38,19 @@ class GoGetter extends FlameGame
   void startGame() {
     playState = PlayState.playing;
 
-
+    // Example: Adding a game board and path blocks
     world.add(GameBoard());
 
-    for(int i = 0; i < 9; i++) {
-      world.add(PathBlock(i+1, //blockType
-        position: Vector2(200.0*i, 1500.0),
+    for (int i = 0; i < 9; i++) {
+      world.add(PathBlock(
+        i + 1, // blockType
+        position: Vector2(200.0 * i, 1500.0),
       ));
     }
   }
 
   @override
-  FutureOr<void> onLoad() async {
+  Future<void> onLoad() async {
     super.onLoad();
 
     camera.viewfinder.anchor = Anchor.topLeft;
@@ -58,5 +59,12 @@ class GoGetter extends FlameGame
     startGame();
   }
 
-  @override Color backgroundColor() => const Color(0xfff2e8cf);
+  void reset() {
+
+    playState = PlayState.welcome;
+    startGame();
+  }
+
+  @override
+  Color backgroundColor() => const Color(0xfff2e8cf);
 }
