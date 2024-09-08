@@ -5,7 +5,7 @@ import 'levels_screen.dart';
 import 'dart:io';
 
 class MainMenu extends StatelessWidget {
-  const MainMenu({Key? key}) : super(key: key);
+  const MainMenu({super.key});
 
   @override
   Widget build(BuildContext context) {

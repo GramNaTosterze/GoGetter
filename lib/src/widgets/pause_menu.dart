@@ -6,11 +6,11 @@ class PauseMenu extends StatelessWidget {
   final VoidCallback onExit;
 
   const PauseMenu({
-    Key? key,
+    super.key,
     required this.onResume,
     required this.onRestart,
     required this.onExit,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

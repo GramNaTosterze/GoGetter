@@ -13,15 +13,16 @@ enum PlayState { welcome, playing, levelCompleted }
 class GoGetter extends FlameGame with HasCollisionDetection {
   GoGetter()
       : super(
-    camera: CameraComponent.withFixedResolution(
-      width: gameWidth,
-      height: gameHeight,
-    ),
-  );
+          camera: CameraComponent.withFixedResolution(
+            width: gameWidth,
+            height: gameHeight,
+          ),
+        );
 
   double get width => size.x;
   double get height => size.y;
 
+  late BoardComponent boardComponent;
   late PlayState _playState;
   PlayState get playState => _playState;
   set playState(PlayState playState) {
@@ -39,12 +40,13 @@ class GoGetter extends FlameGame with HasCollisionDetection {
     playState = PlayState.playing;
 
     // Example: Adding a game board and path blocks
-    world.add(GameBoard());
+    boardComponent = BoardComponent();
+    world.add(boardComponent);
 
-    for (int i = 0; i < 9; i++) {
-      world.add(PathBlock(
-        i + 1, // blockType
-        position: Vector2(200.0 * i, 1500.0),
+    for (var blockType in BlockType.values) {
+      world.add(PathComponent(
+        blockType,
+        position: Vector2(200.0 * blockType.index, 1500.0),
       ));
     }
   }
@@ -60,7 +62,6 @@ class GoGetter extends FlameGame with HasCollisionDetection {
   }
 
   void reset() {
-
     playState = PlayState.welcome;
     startGame();
   }

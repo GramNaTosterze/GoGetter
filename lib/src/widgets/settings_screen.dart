@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +21,11 @@ class SettingsScreen extends StatelessWidget {
             ],
           ),
         ),
-        child: Center(
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Text('Settings will be here'),
-
             ],
           ),
         ),

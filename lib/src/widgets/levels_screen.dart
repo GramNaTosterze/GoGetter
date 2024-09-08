@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LevelsScreen extends StatelessWidget {
-  const LevelsScreen({Key? key}) : super(key: key);
+  const LevelsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +21,10 @@ class LevelsScreen extends StatelessWidget {
             ],
           ),
         ),
-        child: Center(
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Text('Level selection will be here'),
             ],
           ),
