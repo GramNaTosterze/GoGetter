@@ -109,6 +109,7 @@ class BoardComponent extends RectangleComponent
   }
 
   bool isConnected(String v1, String v2) {
+    print(board.findShortestPath(v1, v2) != null);
     return board.findShortestPath(v1, v2) != null;
   }
 

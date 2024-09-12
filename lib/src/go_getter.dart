@@ -13,11 +13,11 @@ enum PlayState { welcome, playing, levelCompleted }
 class GoGetter extends FlameGame with HasCollisionDetection {
   GoGetter()
       : super(
-          camera: CameraComponent.withFixedResolution(
-            width: gameWidth,
-            height: gameHeight,
-          ),
-        );
+    camera: CameraComponent.withFixedResolution(
+      width: gameWidth,
+      height: gameHeight,
+    ),
+  );
 
   double get width => size.x;
   double get height => size.y;
@@ -36,10 +36,12 @@ class GoGetter extends FlameGame with HasCollisionDetection {
     }
   }
 
+  // Add this property
+  VoidCallback? onLevelCompleted;
+
   void startGame() {
     playState = PlayState.playing;
 
-    // Example: Adding a game board and path blocks
     boardComponent = BoardComponent();
     world.add(boardComponent);
 
@@ -47,6 +49,13 @@ class GoGetter extends FlameGame with HasCollisionDetection {
       world.add(PathComponent(
         blockType,
         position: Vector2(200.0 * blockType.index, 1500.0),
+        board: boardComponent,
+        levelConditions: [
+          // Example conditions, adjust as needed
+          {'start': 'u3', 'end': 'r1'},
+          {'start': 'r3', 'end': 'd3'},
+        ],
+        onLevelCompleted: _handleLevelCompleted, // Use the local handler
       ));
     }
   }
@@ -61,11 +70,15 @@ class GoGetter extends FlameGame with HasCollisionDetection {
     startGame();
   }
 
-  void reset() {
-    playState = PlayState.welcome;
-    startGame();
+  void _handleLevelCompleted() {
+    playState = PlayState.levelCompleted;
+    if (onLevelCompleted != null) {
+      onLevelCompleted!(); // Call the callback if it is set
+    }
+    overlays.add(PlayState.levelCompleted.name); // Add overlay to show completion message
   }
 
   @override
-  Color backgroundColor() => const Color(0xfff2e8cf);
+  Color backgroundColor() => Colors.transparent;
+
 }

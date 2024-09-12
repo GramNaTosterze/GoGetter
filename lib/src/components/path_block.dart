@@ -13,14 +13,22 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   Vector2 _startPos;
   late PositionComponent sprite;
   final BlockType _blockType;
+
+  final BoardComponent board;
+  final List<Map<String, String>> levelConditions;
+  final VoidCallback onLevelCompleted;
+
   PathComponent(
-    this._blockType, {
-    required super.position,
-  })  : _startPos = position!,
+      this._blockType, {
+        required super.position,
+        required this.levelConditions,  // Warunki poziomu
+        required this.board,            // Plansza
+        required this.onLevelCompleted, // Callback na ukończenie poziomu
+      }) : _startPos = position!,
         super(
-          idx: -1,
-          color: const Color(0xff255ac2),
-        );
+        idx: -1,
+        color: const Color(0xffffffff),
+      );
 
   /// Returns block id
   int id() {
@@ -41,19 +49,21 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   @override
   FutureOr<void> onLoad() async {
     super.onLoad();
-    // add block to board
+
+    // Dodaj wierzchołki do tablicy planszy
     for (var node in _blockType.nodes.entries) {
       game.boardComponent.board.nodes[node.key] = Set<String>.from(node.value);
     }
-//    game.boardComponent.board.nodes.addAll(nodes);
 
     hitbox.collisionType = CollisionType.passive;
 
+    // Ładowanie sprite'a
     sprite = SpriteComponent(
-        sprite: Sprite(await game.images.load(_blockType.img)),
-        position: size / 2,
-        size: size,
-        anchor: Anchor.center);
+      sprite: Sprite(await game.images.load(_blockType.img)),
+      position: size / 2,
+      size: size,
+      anchor: Anchor.center,
+    );
     add(sprite);
   }
 
@@ -73,6 +83,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     sprite.angle += degrees2Radians * 90;
     priority = 9;
     _rotate();
+    _checkLevelConditions();
   }
 
   @override
@@ -87,6 +98,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onDragEnd(event);
     priority = 0;
     _place();
+    _checkLevelConditions();
   }
 
   @override
@@ -164,6 +176,27 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     other._removeConnections();
     _createConnections();
     other._createConnections();
+  }
+
+  // Sprawdzanie warunków poziomu
+  void _checkLevelConditions() {
+    bool allConditionsMet = true;
+
+    for (var condition in levelConditions) {
+      String start = condition['start']!;
+      String end = condition['end']!;
+
+      // Sprawdzamy, czy dwa wierzchołki są połączone na planszy
+      if (!board.isConnected(start, end)) {
+        allConditionsMet = false;
+        break;
+      }
+    }
+
+    // Jeśli wszystkie warunki spełnione, wywołujemy callback
+    if (allConditionsMet) {
+      onLevelCompleted();
+    }
   }
 
   /// Moves block the the position of closest board space
