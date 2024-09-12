@@ -27,7 +27,7 @@ class _GameAppState extends State<GameApp> {
     super.initState();
     game = GoGetter();
     game.onLevelCompleted = widget.onLevelCompleted; // Pass the callback
-    game.startGame();
+    //game.startGame();
   }
 
   void _showPauseMenu() {
