@@ -110,8 +110,21 @@ class BoardComponent extends RectangleComponent
 
   bool isConnected(String v1, String v2) {
     print(board.findShortestPath(v1, v2) != null);
+    print(v1);
+    print(v2);
     return board.findShortestPath(v1, v2) != null;
   }
+
+  // void reset() {
+  //   // Remove all blocks from the board
+  //   blocks.forEach((block) => remove(block));
+  //
+  //   // Clear the blocks list
+  //   blocks.clear();
+  //
+  //   // Reset the board state (if necessary)
+  //   // ...
+  // }
 
   /// Returns vertices of surrounding subgraph based on board block index
   Set<String> getVertices(int idx, Direction dir) {

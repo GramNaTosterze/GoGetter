@@ -2,21 +2,25 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../go_getter.dart';
+import 'levels_screen.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
+import 'package:flutter/services.dart';
 
 class GameApp extends StatefulWidget {
   final List<Map<String, String>> levelConditions;
   final VoidCallback onLevelCompleted;
+  final int selectedLevel;
 
   const GameApp({
     super.key,
     required this.levelConditions,
     required this.onLevelCompleted,
+    required this.selectedLevel,
   });
 
   @override
-  State<GameApp> createState() => _GameAppState();
+  _GameAppState createState() => _GameAppState();
 }
 
 class _GameAppState extends State<GameApp> {
@@ -26,8 +30,45 @@ class _GameAppState extends State<GameApp> {
   void initState() {
     super.initState();
     game = GoGetter();
-    game.onLevelCompleted = widget.onLevelCompleted; // Pass the callback
-    //game.startGame();
+    game.onLevelCompleted = () {
+      widget.onLevelCompleted(); // Oznacz poziom jako ukończony
+      game.playState = PlayState.levelCompleted; // Przełącz na stan ukończonego poziomu
+      game.overlays.add(PlayState.levelCompleted.name); // Pokaż overlay "Level Completed"
+    };
+    game.startGame(LevelsScreenState.getLevels(), widget.selectedLevel);
+  }
+
+  void _proceedToNextLevel() {
+    int nextLevel = widget.selectedLevel + 1;
+    if (nextLevel < LevelsScreenState.getLevels().length) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GameApp(
+            levelConditions: LevelsScreenState.getLevels()[nextLevel],
+            onLevelCompleted: () {
+              LevelsScreenState.markLevelAsCompleted(nextLevel);
+            },
+            selectedLevel: nextLevel,
+          ),
+        ),
+      );
+    } else {
+      print("Wszystkie poziomy ukończone");
+    }
+  }
+
+  KeyEventResult onKeyEvent(
+      KeyEvent event,
+      Set<LogicalKeyboardKey> keysPressed,
+      ) {
+    if (game.playState == PlayState.levelCompleted) {
+      if (event.logicalKey == LogicalKeyboardKey.space || event.logicalKey == LogicalKeyboardKey.enter) {
+        _proceedToNextLevel(); // Przejście do kolejnego poziomu po naciśnięciu klawisza
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
   }
 
   void _showPauseMenu() {
@@ -49,7 +90,7 @@ class _GameAppState extends State<GameApp> {
 
   void _restartGame() {
     Navigator.of(context).pop();
-    //game.reset();
+    game.reset();
   }
 
   void _exitGame() {
@@ -60,7 +101,7 @@ class _GameAppState extends State<GameApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomRight,
@@ -75,8 +116,9 @@ class _GameAppState extends State<GameApp> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
+                // Wyświetlanie wyniku i przycisku pauzy
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomRight,
@@ -91,9 +133,9 @@ class _GameAppState extends State<GameApp> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Score: ${0}",
-                          style: const TextStyle(
+                        const Text(
+                          "Score: 0", // Możesz tu dynamicznie ustawiać wynik
+                          style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,
                           ),
@@ -107,19 +149,20 @@ class _GameAppState extends State<GameApp> {
                     ),
                   ),
                 ),
+                // Główna część gry
                 Expanded(
                   child: GameWidget(
                     game: game,
                     overlayBuilderMap: {
                       PlayState.welcome.name: (context, game) =>
                       const OverlayScreen(
-                          title: "GoGetter",
-                          subtitle: "WIP"
+                        title: "GoGetter",
+                        subtitle: "WIP",
                       ),
                       PlayState.levelCompleted.name: (context, game) =>
                       const OverlayScreen(
-                          title: "Level Completed",
-                          subtitle: "Go to the next level"
+                        title: "Level Completed",
+                        subtitle: "Press Space or Enter to proceed",
                       ),
                     },
                     initialActiveOverlays: [PlayState.welcome.name],

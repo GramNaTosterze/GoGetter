@@ -15,15 +15,15 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   final BlockType _blockType;
 
   final BoardComponent board;
-  final List<Map<String, String>> levelConditions;
+  final List<Map<String, String>>? levelConditions;
   final VoidCallback onLevelCompleted;
 
   PathComponent(
       this._blockType, {
         required super.position,
-        required this.levelConditions,  // Warunki poziomu
-        required this.board,            // Plansza
-        required this.onLevelCompleted, // Callback na ukończenie poziomu
+        this.levelConditions,
+        required this.board,
+        required this.onLevelCompleted,
       }) : _startPos = position!,
         super(
         idx: -1,
@@ -182,7 +182,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   void _checkLevelConditions() {
     bool allConditionsMet = true;
 
-    for (var condition in levelConditions) {
+    for (var condition in levelConditions ?? []) {
       String start = condition['start']!;
       String end = condition['end']!;
 
