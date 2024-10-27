@@ -1,4 +1,5 @@
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../go_getter.dart';
@@ -54,7 +55,9 @@ class _GameAppState extends State<GameApp> {
         ),
       );
     } else {
-      print("Wszystkie poziomy ukończone");
+      if (kDebugMode) {
+        print("Wszystkie poziomy ukończone");
+      }
     }
   }
 

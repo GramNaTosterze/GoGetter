@@ -1,10 +1,10 @@
 
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart'; // Add this import
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -57,27 +57,27 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
     currentLevelConditions = _levels[_currentLevel];
 
-    // Dodawanie komponentów na podstawie warunków aktualnego poziomu
-    for (var blockType in BlockType.values) {
-      world.add(PathComponent(
-        blockType,
-        position: Vector2(200.0 * blockType.index, 1500.0),
-        board: boardComponent,
-        levelConditions: currentLevelConditions,
-        onLevelCompleted: _handleLevelCompleted,
-      ));
-    }
-  }
+    // Adding each type of pathblock to the board
+    var pathBlocks = [
+      for (var blockType in BlockType.values)
+        PathComponent(
+          blockType,
+          position: Vector2(200.0 * blockType.index, 1500.0),
+          boardComponent: boardComponent,
+        )
+    ];
+    world.addAll(pathBlocks);
+}
 
   void stopGame() {
     // Usunięcie komponentów planszy (BoardComponent)
-    if (boardComponent != null && world.contains(boardComponent)) {
+    if (world.contains(boardComponent)) {
       world.remove(boardComponent);
     }
 
     // Usunięcie wszystkich komponentów typu PathComponent
     world.children
-        .where((component) => component is PathComponent)
+        .whereType<PathComponent>()
         .toList()
         .forEach(world.remove);
 
@@ -86,7 +86,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   }
 
 
-  void _handleLevelCompleted() {
+  void handleLevelCompleted() {
     playState = PlayState.levelCompleted;
     if (onLevelCompleted != null) {
       onLevelCompleted!(); // Wywołanie callbacka, jeśli jest ustawiony
@@ -105,10 +105,14 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
         // Uruchomienie nowego poziomu
         startGame(_levels, _currentLevel);
       } else {
-        print("Wszystkie poziomy ukończone");
+        if (kDebugMode) {
+          print("Wszystkie poziomy ukończone");
+        }
       }
     } else {
-      print("Poziom jeszcze nie został ukończony");
+      if (kDebugMode) {
+        print("Poziom jeszcze nie został ukończony");
+      }
     }
   }
 
