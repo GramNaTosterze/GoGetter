@@ -22,6 +22,7 @@ class Board {
     }
 
     var copy = Board(nodes: nodes);
+    copy.gameBoard = Map.from(gameBoard);
     return copy;
   }
 
@@ -79,10 +80,6 @@ class Board {
     // update in a board graph
     for (var vertex in blockType.nodes.keys) {
       nodes[vertex] = newSubgraph[vertex]!;
-    }
-
-    if (kDebugMode) {
-      debugPrint(toString());
     }
   }
 

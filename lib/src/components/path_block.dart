@@ -82,6 +82,11 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     if (boardComponent.board.gameState(game.currentLevelConditions ?? []) == LevelCondition.win) {
       game.handleLevelCompleted();
     }
+
+    if (kDebugMode) {
+      debugPrint(boardComponent.board.toString());
+      debugPrint("solvable?: ${game.solver.isSolvable()}");
+    }
   }
 
   @override
@@ -171,6 +176,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
     if (kDebugMode) {
       debugPrint(boardComponent.board.toString());
+      debugPrint("solvable?: ${game.solver.isSolvable()}");
     }
   }
 }

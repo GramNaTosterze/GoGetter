@@ -7,9 +7,11 @@ import 'package:flame/input.dart'; // Add this import
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_getter/src/models/models.dart';
 
 import 'components/components.dart';
 import 'config.dart';
+import 'models/models.dart';
 
 enum PlayState { welcome, playing, levelCompleted }
 
@@ -25,6 +27,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   double get width => size.x;
   double get height => size.y;
 
+  late Solver solver;
   late BoardComponent boardComponent;
   late PlayState _playState;
   PlayState get playState => _playState;
@@ -67,6 +70,12 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
         )
     ];
     world.addAll(pathBlocks);
+
+    solver = Solver(
+      board: boardComponent.board,
+      pathBlocks: pathBlocks,
+      levelConditions: currentLevelConditions ?? []
+    );
 }
 
   void stopGame() {
