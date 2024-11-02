@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../models/models.dart';
+
 import '../go_getter.dart';
 import 'block.dart';
 
-import '../logic/board.dart';
 
 class BoardComponent extends RectangleComponent
     with HasGameReference<GoGetter> {
@@ -104,29 +105,6 @@ class BoardComponent extends RectangleComponent
     ];
 
     addAll(blocks);
-  }
-
-
-  /// Return state of current board {win/lose/none}
-  ///
-  /// win meaning that all conditions are met
-  /// lose - current board configuration is invalid
-  /// none - incomplete board
-  LevelCondition gameState() {
-    if (blocks.where((pb) => pb.block == null).isNotEmpty) { return LevelCondition.none; }
-    bool allConditionsMet = true;
-
-    for (var condition in game.currentLevelConditions ?? []) {
-      String start = condition['start']!;
-      String end = condition['end']!;
-      
-      if (!board.isConnected(start, end)) {
-        allConditionsMet = false;
-        break;
-      }
-    }
-
-    return allConditionsMet ? LevelCondition.win : LevelCondition.lose;
   }
 
   BoardComponent copy() {

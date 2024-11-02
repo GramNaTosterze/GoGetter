@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:go_getter/src/go_getter.dart';
 import 'package:graphs/graphs.dart';
 
 import '../components/components.dart';
@@ -8,9 +9,9 @@ import '../components/components.dart';
 /// Made to be used with Graph dart library
 class Board {
   Map<String, Set<String>> nodes;
-  Map<int, BlockType?> gameBoard = {};
+  Map<int, BlockType?> gameBoard = { for (var i=0; i<9; i++) i: null };
   Board({
-    required this.nodes,
+    required this.nodes
   });
 
 
@@ -87,6 +88,32 @@ class Board {
 
   bool isConnected(String v1, String v2) {
     return _findShortestPath(v1, v2) != null;
+  }
+
+  /// Return state of current board {win/lose/none}
+  ///
+  /// win meaning that all conditions are met
+  /// lose - current board configuration is invalid
+  /// none - incomplete board
+  LevelCondition gameState(List<Map<String, String>> levelConditions) {
+    for (var pb in gameBoard.values) {
+      if (pb == null) {
+        return LevelCondition.none;
+      }
+    }
+    bool allConditionsMet = true;
+
+    for (var condition in levelConditions) {
+      String start = condition['start']!;
+      String end = condition['end']!;
+
+      if (!isConnected(start, end)) {
+        allConditionsMet = false;
+        break;
+      }
+    }
+
+    return allConditionsMet ? LevelCondition.win : LevelCondition.lose;
   }
 
   /// Returns vertices of surrounding subgraph based on board block index
