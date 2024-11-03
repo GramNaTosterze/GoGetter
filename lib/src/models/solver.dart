@@ -1,6 +1,5 @@
 import 'package:go_getter/src/components/components.dart';
 
-import 'board.dart';
 import 'models.dart';
 
 ///Solver class

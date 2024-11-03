@@ -7,7 +7,6 @@ import 'package:flame/input.dart'; // Add this import
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_getter/src/models/models.dart';
 
 import 'components/components.dart';
 import 'config.dart';
