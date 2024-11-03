@@ -1,6 +1,7 @@
 import 'package:go_getter/src/components/components.dart';
 
 import 'board.dart';
+import 'models.dart';
 
 ///Solver class
 ///
@@ -16,7 +17,7 @@ class Solver {
     required this.levelConditions
   });
 
-  BlockType? hint() {
+  Hint? hint() {
     return solve().$1;
   }
 
@@ -24,13 +25,13 @@ class Solver {
     return solve().$2;
   }
 
-  (BlockType?, bool) solve() {
+  (Hint?, bool) solve() {
     return _solve(/*Blocks not placed on the board*/
         pathBlocks.where((pb) => pb.block == null).map((pb) => pb.blockType).toList(),
         board.copy());
   }
 
-  (BlockType?, bool) _solve(List<BlockType> notPlaces, Board board) {
+  (Hint?, bool) _solve(List<BlockType> notPlaces, Board board) {
      var boardState = board.gameState(levelConditions);
     if (boardState == LevelCondition.lose || notPlaces.isEmpty) {
       return (null, boardState == LevelCondition.win);
@@ -43,13 +44,14 @@ class Solver {
           List<BlockType> remaining = List.from(notPlaces);
           remaining.remove(block);
           board.place(block, place);
+          var numOfRotations = 0;
           for (var _ in Direction.values) {
-            if (_solve(remaining, board.copy()).$2) { return (block, true); }
+            if (_solve(remaining, board.copy()).$2) { return (Hint(blockType: block, place: place, numOfRotations: numOfRotations), true); }
             board.rotate(block);
+            numOfRotations++;
           }
         }
       }
-
     }
     return (null, false);
   }
