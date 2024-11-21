@@ -42,18 +42,18 @@ class BoardComponent extends RectangleComponent
   void render(Canvas canvas) {
     // Rysowanie tła z gradientem radialnym
     Rect rect = Rect.fromLTWH(0, 0, size.x, size.y);
-    const RadialGradient gradient = RadialGradient(
-      center: Alignment.center,
-      radius: 1.0,
-      colors: <Color>[
-        Color(0xff878787),
-        Color(0xFFaeff80),
-        Color(0xff3b7850),
-      ],
-      stops: <double>[0.25, 0.15, 0.6],
-    );
-
-    final Paint paint = Paint()..shader = gradient.createShader(rect);
+    // const RadialGradient gradient = RadialGradient(
+    //   center: Alignment.center,
+    //   radius: 1.0,
+    //   colors: <Color>[
+    //     Color(0xff878787),
+    //     Color(0xFFaeff80),
+    //     Color(0xff3b7850),
+    //   ],
+    //   stops: <double>[0.25, 0.15, 0.6],
+    // );
+    //
+    // final Paint paint = Paint()..shader = gradient.createShader(rect);
     canvas.drawRect(rect, paint);
 
     // Rysowanie prostokąta z gradientem od szarego do białego
@@ -86,9 +86,9 @@ class BoardComponent extends RectangleComponent
     size = Vector2(game.width, game.height);
 
     add(SpriteComponent(
-        sprite: Sprite(await game.images.load('board.png')),
+        sprite: Sprite(await game.images.load('plansza.bmp')),
         position: size / 2,
-        size: size * 0.8,
+        size: size * 0.61,
         anchor: Anchor.center));
 
     Vector2 blockSize = size / 6 + Vector2(10, 10);
@@ -101,7 +101,7 @@ class BoardComponent extends RectangleComponent
               position +
               Vector2(blockSize.x * (i % 3).toDouble(),
                   blockSize.y * (i ~/ 3).toDouble()),
-          color: const Color(0xff157005).withOpacity(0.8),
+          color: const Color(0xff157005).withOpacity(0),
         )
     ];
 
@@ -109,22 +109,8 @@ class BoardComponent extends RectangleComponent
   }
 
   bool isConnected(String v1, String v2) {
-    print(board.findShortestPath(v1, v2) != null);
-    print(v1);
-    print(v2);
     return board.findShortestPath(v1, v2) != null;
   }
-
-  // void reset() {
-  //   // Remove all blocks from the board
-  //   blocks.forEach((block) => remove(block));
-  //
-  //   // Clear the blocks list
-  //   blocks.clear();
-  //
-  //   // Reset the board state (if necessary)
-  //   // ...
-  // }
 
   /// Returns vertices of surrounding subgraph based on board block index
   Set<String> getVertices(int idx, Direction dir) {

@@ -12,31 +12,26 @@ class LevelsScreen extends StatefulWidget {
 class LevelsScreenState extends State<LevelsScreen> {
   late final BoardComponent board;
 
-  // Lista poziomów ukończonych (statyczna, aby zachować stan między ekranami)
   static List<int> completedLevels = [];
+  static List<Map<String, dynamic>> levels = [];
 
   LevelsScreenState() {
     board = BoardComponent();
-  }
-
-  // Lista poziomów (statyczna, aby nie dodawać wielokrotnie)
-  static List<Map<String, dynamic>> levels = [];
-
-  void addCustomLevel(List<Map<String, String>> conditions) {
-    levels.add({'conditions': conditions});
   }
 
   static List<List<Map<String, String>>> getLevels() {
     return levels.map<List<Map<String, String>>>((level) => level['conditions'] as List<Map<String, String>>).toList();
   }
 
+  void addCustomLevel(List<Map<String, String>> conditions) {
+    levels.add({'conditions': conditions});
+  }
+
   @override
   void initState() {
     super.initState();
 
-    // Sprawdzanie, czy poziomy zostały już dodane
     if (levels.isEmpty) {
-      // Dodaj poziomy tylko raz
       addCustomLevel([
         {'start': 'u3', 'end': 'r1'},
         {'start': 'r3', 'end': 'd3'},
@@ -55,7 +50,6 @@ class LevelsScreenState extends State<LevelsScreen> {
     }
   }
 
-  // Funkcja, która dodaje poziom do listy ukończonych
   static void markLevelAsCompleted(int levelIndex) {
     if (!completedLevels.contains(levelIndex)) {
       completedLevels.add(levelIndex);
@@ -75,8 +69,8 @@ class LevelsScreenState extends State<LevelsScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xff348d57),
-              Color(0xfff2e8cf),
+              Color(0xff204b5e),
+              Color(0xff5d97a2),
             ],
           ),
         ),
@@ -93,7 +87,6 @@ class LevelsScreenState extends State<LevelsScreen> {
             final level = levels[index];
             final conditions = level['conditions']!;
 
-            // Sprawdzenie, czy poziom został ukończony
             bool isCompleted = completedLevels.contains(index);
 
             return ElevatedButton(
@@ -107,7 +100,7 @@ class LevelsScreenState extends State<LevelsScreen> {
                     builder: (context) => GameApp(
                       levelConditions: conditions,
                       onLevelCompleted: () {
-                        LevelsScreenState.markLevelAsCompleted(index); // Oznacz poziom jako ukończony
+                        LevelsScreenState.markLevelAsCompleted(index);
                       },
                       selectedLevel: index,
                     ),
@@ -122,4 +115,3 @@ class LevelsScreenState extends State<LevelsScreen> {
     );
   }
 }
-
