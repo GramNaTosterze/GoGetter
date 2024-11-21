@@ -7,11 +7,8 @@ import '../components/components.dart';
 /// Made to be used with Graph dart library
 class Board {
   Map<String, Set<String>> nodes;
-  Map<int, BlockType?> gameBoard = { for (var i=0; i<9; i++) i: null };
-  Board({
-    required this.nodes
-  });
-
+  Map<int, BlockType?> gameBoard = {for (var i = 0; i < 9; i++) i: null};
+  Board({required this.nodes});
 
   Board copy() {
     Map<String, Set<String>> nodes = {};
@@ -24,8 +21,21 @@ class Board {
     return copy;
   }
 
+  /// Swaps block [block1] and [block2]
+  void swap(BlockType block1, BlockType block2) {
+    var p1 = blockPos(block1);
+    var p2 = blockPos(block2);
+
+    remove(block1);
+    remove(block2);
+
+    place(block1, p2);
+    place(block2, p1);
+  }
+
   /// adds block to the board
   void place(BlockType blockType, int placeOnBoard) {
+    if (placeOnBoard == -1) return;
     gameBoard[placeOnBoard] = blockType;
     for (var direction in Direction.values) {
       Set<String> vertices = _getVertices(
@@ -38,7 +48,9 @@ class Board {
   }
 
   /// removes base block from board
-  void remove(Iterable<String> vertices, int placeOnBoard) {
+  void remove(BlockType block) {
+    var vertices = block.nodes.keys;
+    var placeOnBoard = blockPos(block);
     gameBoard[placeOnBoard] = null;
     for (var v1 in vertices) {
       for (var v2 in Set.from(nodes[v1]!)) {
@@ -81,8 +93,46 @@ class Board {
     }
   }
 
+  int blockPos(BlockType block) => gameBoard.keys.firstWhere((p) => gameBoard[p] == block, orElse: () => -1 );
+
   bool isConnected(String v1, String v2) {
     return _findShortestPath(v1, v2) != null;
+  }
+
+  bool _hasDeadEnds() {
+    for (var block in gameBoard.entries) {
+      if (!_isValidOnBoard(block)) return true;
+    }
+    return false;
+  }
+
+  bool _isValidOnBoard(MapEntry<int, BlockType?> block) {
+    if (block.value == null) return true;
+    for (var vertex in block.value!.nodes.keys) {
+      var vertices = nodes[vertex]!;
+      if (vertices.length <= 1) {
+        for (var v in vertices) {
+          if (block.value!.nodes.keys.contains(v)) continue;
+          if ([
+            "u1",
+            "u2",
+            "u3",
+            "d1",
+            "d2",
+            "d3",
+            "l1",
+            "l2",
+            "l3",
+            "r1",
+            "r2",
+            "r3"
+          ].contains(v)) continue;
+
+          if (nodes[v]!.length > 1) return false;
+        }
+      }
+    }
+    return true;
   }
 
   /// Return state of current board {win/lose/none}
@@ -91,8 +141,8 @@ class Board {
   /// lose - current board configuration is invalid
   /// none - incomplete board
   LevelCondition gameState(List<Map<String, String>> levelConditions) {
-    for (var pb in gameBoard.values) {
-      if (pb == null) {
+    for (var i = 0; i < 9; i++) {
+      if (gameBoard[i] == null) {
         return LevelCondition.none;
       }
     }
@@ -108,7 +158,9 @@ class Board {
       }
     }
 
-    return allConditionsMet ? LevelCondition.win : LevelCondition.lose;
+    return allConditionsMet && !_hasDeadEnds()
+        ? LevelCondition.win
+        : LevelCondition.lose;
   }
 
   /// Returns vertices of surrounding subgraph based on board block index
@@ -216,7 +268,7 @@ class Board {
         return null;
     }
   }
-  
+
   void _addEdge(String v1, String v2) {
     if (nodes[v1] == null) {
       nodes[v1] = {v2};
@@ -249,7 +301,6 @@ class Board {
     return str;
   }
 }
-
 
 enum Direction {
   up,

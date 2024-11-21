@@ -17,14 +17,14 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   BoardComponent boardComponent;
 
   PathComponent(
-      this.blockType, {
-        required super.position,
-        required this.boardComponent,
-      }) : _startPos = position!,
+    this.blockType, {
+    required super.position,
+    required this.boardComponent,
+  })  : _startPos = position!,
         super(
-        idx: -1,
-        color: const Color(0xffffffff),
-      );
+          idx: -1,
+          color: const Color(0xffffffff),
+        );
 
   /// Returns block id
   int id() {
@@ -79,13 +79,14 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     sprite.angle += degrees2Radians * 90;
     priority = 9;
     boardComponent.board.rotate(blockType);
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) == LevelCondition.win) {
+    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+        LevelCondition.win) {
       game.handleLevelCompleted();
     }
 
     if (kDebugMode) {
       debugPrint(boardComponent.board.toString());
-      debugPrint("solvable?: ${game.solver.isSolvable()}");
+      //debugPrint("solvable?: ${game.solver.isSolvable()}");
     }
   }
 
@@ -94,6 +95,17 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onDragStart(event);
     priority = 10;
     _startPos = position.clone();
+    block?.block = null;
+    block = null;
+  }
+
+  /// Removes block from the board
+  void _pickup() {
+    if (block != null) {
+      block?.block = null;
+      boardComponent.board.remove(blockType);
+      block = null;
+    }
   }
 
   @override
@@ -101,7 +113,8 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onDragEnd(event);
     priority = 0;
     _place();
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) == LevelCondition.win) {
+    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+        LevelCondition.win) {
       game.handleLevelCompleted();
     }
   }
@@ -121,7 +134,6 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   ///
   /// If there is already block present it swaps their places
   void _place() {
-    var block = this.block;
     if (isColliding) {
       BlockComponent closest = getClosestBoardBlock();
       if (!closest.isEmpty()) {
@@ -133,10 +145,8 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
       } else {
         move(closest);
       }
-    } else if (block != null) {
-      block.block = null;
-      this.block = null;
-      boardComponent.board.remove(blockType.nodes.keys, this.block!.idx);
+    } else if(block != null) {
+      boardComponent.board.remove(blockType);
     }
   }
 
@@ -154,15 +164,13 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
     // models
     other as PathComponent;
-    boardComponent.board.remove(blockType.nodes.keys, block!.idx);
-    boardComponent.board.remove(other.blockType.nodes.keys, other.block!.idx);
-    boardComponent.board.place(blockType, block!.idx);
-    boardComponent.board.place(other.blockType, other.block!.idx);
+    boardComponent.board.swap(blockType, other.blockType);
   }
 
   /// Moves block the the position of closest board space
   void move(BlockComponent closest) {
     // gui
+    //_pickup();
     var other = block;
     position = closest.position.clone();
 
@@ -172,11 +180,13 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     closest.block = this;
     block = closest;
 
+
+    boardComponent.board.remove(blockType);
     boardComponent.board.place(blockType, block!.idx);
 
     if (kDebugMode) {
       debugPrint(boardComponent.board.toString());
-      debugPrint("solvable?: ${game.solver.isSolvable()}");
+      //debugPrint("solvable?: ${game.solver.isSolvable()}");
     }
   }
 }
