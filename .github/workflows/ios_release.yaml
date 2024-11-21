@@ -1,4 +1,4 @@
-name: Android Release
+name: iOS Release
 
 on:
   push:
@@ -9,16 +9,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  version:
-    runs-on: ubuntu-latest
+  main:
+    runs-on: macos-latest
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.19.0
+          channel: stable
       - run: flutter pub get
       - run: flutter test
-      - run: flutter build apk
-      - run: flutter build appbundle
+      - run: flutter build ios --release --no-codesign
