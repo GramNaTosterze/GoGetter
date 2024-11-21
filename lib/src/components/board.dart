@@ -1,19 +1,42 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../models/models.dart';
+
 import '../go_getter.dart';
 import 'block.dart';
 
-class GameBoard extends RectangleComponent with HasGameReference<GoGetter> {
-  GameBoard()
-      : super(
-    paint: Paint()..color = Colors.transparent,
-  );
 
-  late final List<BoardBlock> blocks;
+class BoardComponent extends RectangleComponent
+    with HasGameReference<GoGetter> {
+  BoardComponent()
+      : board = Board(nodes: {
+          // upper destination
+          'u1': {},
+          'u2': {},
+          'u3': {},
+
+          // down
+          'd1': {},
+          'd2': {},
+          'd3': {},
+
+          // left
+          'l1': {},
+          'l2': {},
+          'l3': {},
+
+          // right
+          'r1': {},
+          'r2': {},
+          'r3': {},
+        }),
+        super(paint: Paint()..color = Colors.transparent);
+
+  late final List<BlockComponent> blocks;
+  Board board;
 
   @override
   void render(Canvas canvas) {
@@ -49,10 +72,10 @@ class GameBoard extends RectangleComponent with HasGameReference<GoGetter> {
       ],
     );
 
-    final Paint rectPaint = Paint()..shader = rectGradient.createShader(centerRect);
+    final Paint rectPaint = Paint()
+      ..shader = rectGradient.createShader(centerRect);
     canvas.drawRect(centerRect, rectPaint);
 
-    // Rysowanie dzieci (BoardBlock)
     super.render(canvas);
   }
 
@@ -63,16 +86,16 @@ class GameBoard extends RectangleComponent with HasGameReference<GoGetter> {
 
     add(SpriteComponent(
         sprite: Sprite(await game.images.load('board.png')),
-        position: size/2,
-        size: size*0.8,
-        anchor: Anchor.center
-    ));
+        position: size / 2,
+        size: size * 0.8,
+        anchor: Anchor.center));
 
     Vector2 blockSize = size / 6 + Vector2(10, 10);
     Vector2 start = size / 2 - blockSize;
     blocks = [
       for (int i = 0; i < 9; i++)
-        BoardBlock(
+        BlockComponent(
+          idx: i,
           position: start +
               position +
               Vector2(blockSize.x * (i % 3).toDouble(),
@@ -83,4 +106,17 @@ class GameBoard extends RectangleComponent with HasGameReference<GoGetter> {
 
     addAll(blocks);
   }
+
+  BoardComponent copy() {
+    BoardComponent copy = BoardComponent();
+    copy.blocks = List.from(blocks);
+    copy.board = board.copy();
+    return copy;
+  }
+}
+
+enum LevelCondition {
+  win,
+  lose,
+  none
 }

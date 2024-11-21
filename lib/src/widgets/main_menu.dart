@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'game_app.dart';
 import 'settings_screen.dart';
 import 'levels_screen.dart';
 import 'dart:io';
 
 class MainMenu extends StatelessWidget {
-  const MainMenu({Key? key}) : super(key: key);
+  const MainMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +30,10 @@ class MainMenu extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const GameApp()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => const GameApp()),
+                  // );
                 },
                 child: const Text('Start Game'),
               ),
