@@ -12,27 +12,23 @@ import 'block.dart';
 class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   Vector2 _startPos;
   late PositionComponent sprite;
-  final BlockType _blockType;
+  final BlockType blockType;
 
-  final BoardComponent board;
-  final List<Map<String, String>>? levelConditions;
-  final VoidCallback onLevelCompleted;
+  BoardComponent boardComponent;
 
   PathComponent(
-      this._blockType, {
-        required super.position,
-        this.levelConditions,
-        required this.board,
-        required this.onLevelCompleted,
-      }) : _startPos = position!,
+    this.blockType, {
+    required super.position,
+    required this.boardComponent,
+  })  : _startPos = position!,
         super(
-        idx: -1,
-        color: const Color(0xffffffff),
-      );
+          idx: -1,
+          color: const Color(0xffffffff),
+        );
 
   /// Returns block id
   int id() {
-    return _blockType.id;
+    return blockType.id;
   }
 
   /// Returns closest Block placed on the board
@@ -51,15 +47,15 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onLoad();
 
     // Dodaj wierzchołki do tablicy planszy
-    for (var node in _blockType.nodes.entries) {
-      game.boardComponent.board.nodes[node.key] = Set<String>.from(node.value);
+    for (var node in blockType.nodes.entries) {
+      boardComponent.board.nodes[node.key] = Set<String>.from(node.value);
     }
 
     hitbox.collisionType = CollisionType.passive;
 
     // Ładowanie sprite'a
     sprite = SpriteComponent(
-      sprite: Sprite(await game.images.load(_blockType.img)),
+      sprite: Sprite(await game.images.load(blockType.img)),
       position: size / 2,
       size: size,
       anchor: Anchor.center,
@@ -82,8 +78,16 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onTapUp(event);
     sprite.angle += degrees2Radians * 90;
     priority = 9;
-    _rotate();
-    _checkLevelConditions();
+    boardComponent.board.rotate(blockType);
+    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+        LevelCondition.win) {
+      game.handleLevelCompleted();
+    }
+
+    if (kDebugMode) {
+      debugPrint(boardComponent.board.toString());
+      //debugPrint("solvable?: ${game.solver.isSolvable()}");
+    }
   }
 
   @override
@@ -91,6 +95,17 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onDragStart(event);
     priority = 10;
     _startPos = position.clone();
+    block?.block = null;
+    block = null;
+  }
+
+  /// Removes block from the board
+  void _pickup() {
+    if (block != null) {
+      block?.block = null;
+      boardComponent.board.remove(blockType);
+      block = null;
+    }
   }
 
   @override
@@ -98,35 +113,15 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onDragEnd(event);
     priority = 0;
     _place();
-    _checkLevelConditions();
+    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+        LevelCondition.win) {
+      game.handleLevelCompleted();
+    }
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
     position += event.localDelta;
-  }
-
-  void _createConnections() {
-    for (var direction in Direction.values) {
-      Set<String> vertices = game.boardComponent.getVertices(
-          block!.idx /*board blocks get idx when created*/, direction);
-      for (var vertex in vertices) {
-        game.boardComponent.board
-            .addEdge(vertex, 'b${_blockType.id}$direction');
-        game.boardComponent.board
-            .addEdge('b${_blockType.id}$direction', vertex);
-      }
-    }
-  }
-
-  void _removeConnections() {
-    for (var v1 in _blockType.nodes.keys) {
-      for (var v2 in Set.from(game.boardComponent.board.nodes[v1]!)) {
-        if (!_blockType.nodes.keys.contains(v2)) {
-          game.boardComponent.board.removeEdge(v1, v2);
-        }
-      }
-    }
   }
 
   /// moves block to original position
@@ -139,7 +134,6 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   ///
   /// If there is already block present it swaps their places
   void _place() {
-    var block = this.block;
     if (isColliding) {
       BlockComponent closest = getClosestBoardBlock();
       if (!closest.isEmpty()) {
@@ -149,16 +143,14 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
           _returnToStartingPosition();
         }
       } else {
-        _move(closest);
+        move(closest);
       }
-    } else if (block != null) {
-      block.block = null;
-      this.block = null;
-      _removeConnections();
+    } else if(block != null) {
+      boardComponent.board.remove(blockType);
     }
   }
 
-  /// Swaps two blocks on the [board]
+  /// Swaps two blocks on the [boardComponent]
   void _swap(BlockComponent other) {
     BlockComponent? tmp = block;
 
@@ -170,38 +162,15 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     other.block?.block = this;
     other.block = tmp;
 
-    // logic
+    // models
     other as PathComponent;
-    _removeConnections();
-    other._removeConnections();
-    _createConnections();
-    other._createConnections();
-  }
-
-  // Sprawdzanie warunków poziomu
-  void _checkLevelConditions() {
-    bool allConditionsMet = true;
-
-    for (var condition in levelConditions ?? []) {
-      String start = condition['start']!;
-      String end = condition['end']!;
-
-      // Sprawdzamy, czy dwa wierzchołki są połączone na planszy
-      if (!board.isConnected(start, end)) {
-        allConditionsMet = false;
-        break;
-      }
-    }
-
-    // Jeśli wszystkie warunki spełnione, wywołujemy callback
-    if (allConditionsMet) {
-      onLevelCompleted();
-    }
+    boardComponent.board.swap(blockType, other.blockType);
   }
 
   /// Moves block the the position of closest board space
-  void _move(BlockComponent closest) {
+  void move(BlockComponent closest) {
     // gui
+    //_pickup();
     var other = block;
     position = closest.position.clone();
 
@@ -211,46 +180,13 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     closest.block = this;
     block = closest;
 
-    _createConnections();
+
+    boardComponent.board.remove(blockType);
+    boardComponent.board.place(blockType, block!.idx);
 
     if (kDebugMode) {
-      debugPrint(game.boardComponent.board.toString());
-    }
-  }
-
-  // rotates this block
-  void _rotate() {
-    // create empty subgraph
-    Map<String, Set<String>> newSubgraph = {
-      for (var v in _blockType.nodes.keys) v: {}
-    };
-
-    // construct new rotated subgraph
-    for (var v1 in _blockType.nodes.keys) {
-      var nextVertex =
-          '${v1.substring(0, 2)}${Direction.fromString(v1[2]).next()}';
-      Set<String> nextVertexEdges = {};
-      Set<String> nonSubgraphEdges = {};
-      for (var v2 in game.boardComponent.board.nodes[v1]!) {
-        if (_blockType.nodes.keys.contains(v2)) {
-          nextVertexEdges.add(
-              '${v2.substring(0, 2)}${Direction.fromString(v2[2]).next()}');
-        } else {
-          nonSubgraphEdges.add(v2);
-        }
-      }
-
-      newSubgraph[nextVertex]!.addAll(nextVertexEdges);
-      newSubgraph[v1]!.addAll(nonSubgraphEdges);
-    }
-
-    // update in a board graph
-    for (var vertex in _blockType.nodes.keys) {
-      game.boardComponent.board.nodes[vertex] = newSubgraph[vertex]!;
-    }
-
-    if (kDebugMode) {
-      debugPrint(game.boardComponent.board.toString());
+      debugPrint(boardComponent.board.toString());
+      //debugPrint("solvable?: ${game.solver.isSolvable()}");
     }
   }
 }

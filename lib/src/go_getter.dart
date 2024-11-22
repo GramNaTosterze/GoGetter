@@ -1,14 +1,19 @@
+
 import 'dart:async';
 import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame/input.dart'; // Add this import
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'widgets/levels_screen.dart';
 
 import 'components/components.dart';
 import 'config.dart';
+import 'models/models.dart';
 
 enum PlayState { welcome, playing, levelCompleted }
 
@@ -59,17 +64,42 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       ));
     }
   }
+    // Adding each type of pathblock to the board
+    var pathBlocks = [
+      for (var blockType in BlockType.values)
+        PathComponent(
+          blockType,
+          position: Vector2(200.0 * blockType.index, 1500.0),
+          boardComponent: boardComponent,
+        )
+    ];
+    world.addAll(pathBlocks);
+
+    solver = Solver(
+      board: boardComponent.board,
+      pathBlocks: pathBlocks,
+      levelConditions: currentLevelConditions ?? []
+    );
+}
 
   void stopGame() {
     world.remove(boardComponent);
+    // Usunięcie komponentów planszy (BoardComponent)
+    if (world.contains(boardComponent)) {
+      world.remove(boardComponent);
+    }
+
+    // Usunięcie wszystkich komponentów typu PathComponent
     world.children
-        .where((component) => component is PathComponent)
+        .whereType<PathComponent>()
         .toList()
         .forEach(world.remove);
     playState = PlayState.welcome;
   }
 
   void _handleLevelCompleted() {
+
+  void handleLevelCompleted() {
     playState = PlayState.levelCompleted;
     if (onLevelCompleted != null) {
       onLevelCompleted!();
@@ -87,7 +117,13 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
           onLevelChanged!();  // Informujemy o zmianie poziomu
         }
       } else {
-        print("Wszystkie poziomy ukończone");
+        if (kDebugMode) {
+          print("Wszystkie poziomy ukończone");
+        }
+      }
+    } else {
+      if (kDebugMode) {
+        print("Poziom jeszcze nie został ukończony");
       }
     }
   }

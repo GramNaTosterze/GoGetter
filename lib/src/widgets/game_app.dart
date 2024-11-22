@@ -1,4 +1,5 @@
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,6 +7,7 @@ import '../go_getter.dart';
 import 'levels_screen.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
+import 'package:flutter/services.dart';
 
 class GameApp extends StatefulWidget {
   final List<Map<String, String>> levelConditions;
@@ -43,6 +45,41 @@ class _GameAppState extends State<GameApp> {
     };
 
     game.startGame(LevelsScreenState.getLevels(), widget.selectedLevel);
+  }
+
+  void _proceedToNextLevel() {
+    int nextLevel = widget.selectedLevel + 1;
+    if (nextLevel < LevelsScreenState.getLevels().length) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GameApp(
+            levelConditions: LevelsScreenState.getLevels()[nextLevel],
+            onLevelCompleted: () {
+              LevelsScreenState.markLevelAsCompleted(nextLevel);
+            },
+            selectedLevel: nextLevel,
+          ),
+        ),
+      );
+    } else {
+      if (kDebugMode) {
+        print("Wszystkie poziomy ukończone");
+      }
+    }
+  }
+
+  KeyEventResult onKeyEvent(
+      KeyEvent event,
+      Set<LogicalKeyboardKey> keysPressed,
+      ) {
+    if (game.playState == PlayState.levelCompleted) {
+      if (event.logicalKey == LogicalKeyboardKey.space || event.logicalKey == LogicalKeyboardKey.enter) {
+        _proceedToNextLevel(); // Przejście do kolejnego poziomu po naciśnięciu klawisza
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
   }
 
   void _showPauseMenu() {
