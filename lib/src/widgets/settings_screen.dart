@@ -35,21 +35,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: DefaultTextStyle(
           style: TextStyle(
             color: Colors.white,
-            fontSize: fontSize, // Jeśli chcesz dynamicznie zmieniać rozmiar czcionki
-            fontFamily: 'PressStart2P', // Jeśli używasz niestandardowej czcionki
+            fontSize: fontSize,
+            fontFamily: 'PressStart2P',
           ),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                // Opcja włączenia/wyłączenia muzyki
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Music'),
                     Switch(
-                      activeColor: Colors.white, // Kolor aktywnego przełącznika
-                      inactiveThumbColor: Colors.grey, // Kolor nieaktywnego przełącznika
+                      activeColor: Colors.white,
+                      inactiveThumbColor: Colors.grey,
                       value: musicEnabled,
                       onChanged: (bool value) {
                         setState(() {
@@ -91,7 +90,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                // Suwak wielkości czcionki
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -120,7 +118,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                // Wybór poziomu trudności
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -146,7 +143,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const Spacer(),
-                // Przycisk zapisu ustawień
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);

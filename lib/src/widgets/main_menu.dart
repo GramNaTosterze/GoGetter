@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'settings_screen.dart';
 import 'levels_screen.dart';
-import '../../play_games_service.dart'; // Upewnij się, że ścieżka jest poprawna
+import '../../play_games_service.dart';
 import 'dart:io';
 
 class MainMenu extends StatefulWidget {
@@ -32,7 +32,6 @@ class _MainMenuState extends State<MainMenu> {
         _playerId = playerId;
       });
     } else {
-      // Spróbuj zalogować użytkownika
       bool signedIn = await PlayGamesService.signIn();
       if (signedIn) {
         String? playerId = await PlayGamesService.getPlayerId();
@@ -79,7 +78,6 @@ class _MainMenuState extends State<MainMenu> {
               else
                 ElevatedButton(
                   onPressed: () async {
-                    // Spróbuj zalogować użytkownika
                     bool signedIn = await PlayGamesService.signIn();
                     if (signedIn) {
                       String? playerId = await PlayGamesService.getPlayerId();

@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MainMenu(), // Używamy klasy MainMenu jako ekranu głównego
+      home: const MainMenu(),
     );
   }
 }

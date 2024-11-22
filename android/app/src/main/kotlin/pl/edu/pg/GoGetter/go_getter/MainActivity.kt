@@ -16,7 +16,6 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        // Set up MethodChannel in configureFlutterEngine
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "isAuthenticated" -> checkAuthentication(result)
@@ -29,11 +28,9 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Initialize Play Games SDK in onCreate
         PlayGamesSdk.initialize(this)
     }
 
-    // Check if the user is authenticated
     private fun checkAuthentication(result: MethodChannel.Result) {
         val signInClient = PlayGames.getGamesSignInClient(this)
         signInClient.isAuthenticated.addOnCompleteListener { task ->
@@ -42,7 +39,6 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    // Sign in the user
     private fun signIn(result: MethodChannel.Result) {
         val signInClient = PlayGames.getGamesSignInClient(this)
         signInClient.signIn().addOnCompleteListener { task ->
@@ -58,7 +54,6 @@ class MainActivity : FlutterActivity() {
     }
 
 
-    // Retrieve the Player ID
     private fun getPlayerId(result: MethodChannel.Result) {
         val playersClient: PlayersClient = PlayGames.getPlayersClient(this)
         playersClient.currentPlayer.addOnCompleteListener { task ->

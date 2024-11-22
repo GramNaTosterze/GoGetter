@@ -85,8 +85,8 @@ class _GameAppState extends State<GameApp> {
                 Color(0xff204b5e),
                 Color(0xff204b5e),
               ],
-              stops: <double>[0.2, 0.5, 0.8], // Płynniejsze przejścia
-              radius: 2.0, // Dostosuj promień w razie potrzeby
+              stops: <double>[0.2, 0.5, 0.8],
+              radius: 2.0,
             ),
           ),
           child: SafeArea(
@@ -162,7 +162,7 @@ class _GameAppState extends State<GameApp> {
                           subtitle: "Press Space or Enter to proceed",
                         ),
                       },
-                      initialActiveOverlays: [], // Usuwamy "welcome" i ustawiamy pustą listę
+                      initialActiveOverlays: [],
                     ),
                   ),
 
