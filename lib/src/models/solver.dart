@@ -37,7 +37,7 @@ class Solver {
     }
 
     for (var block in notPlaces) {
-      for (var place in board.gameBoard.keys) {
+      for (var place = 0; place < 9; place++) {
         if (board.gameBoard[place] == null) { // empty blocks on the board
 
           List<BlockType> remaining = List.from(notPlaces);

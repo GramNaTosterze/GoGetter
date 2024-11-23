@@ -141,26 +141,24 @@ class Board {
   /// lose - current board configuration is invalid
   /// none - incomplete board
   LevelCondition gameState(List<Map<String, String>> levelConditions) {
+    if (_hasDeadEnds()) return LevelCondition.lose;
+
     for (var i = 0; i < 9; i++) {
       if (gameBoard[i] == null) {
         return LevelCondition.none;
       }
     }
-    bool allConditionsMet = true;
 
     for (var condition in levelConditions) {
       String start = condition['start']!;
       String end = condition['end']!;
 
       if (!isConnected(start, end)) {
-        allConditionsMet = false;
-        break;
+        return LevelCondition.lose;
       }
     }
 
-    return allConditionsMet && !_hasDeadEnds()
-        ? LevelCondition.win
-        : LevelCondition.lose;
+    return LevelCondition.win;
   }
 
   /// Returns vertices of surrounding subgraph based on board block index

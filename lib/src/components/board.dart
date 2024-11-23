@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
+import 'package:go_getter/src/components/path_block.dart';
 
 import '../models/models.dart';
 
 import '../go_getter.dart';
 import 'block.dart';
-
-import '../graph.dart';
 
 class BoardComponent extends RectangleComponent
     with HasGameReference<GoGetter> {
@@ -43,18 +43,6 @@ class BoardComponent extends RectangleComponent
   void render(Canvas canvas) {
     // Rysowanie tła z gradientem radialnym
     Rect rect = Rect.fromLTWH(0, 0, size.x, size.y);
-    // const RadialGradient gradient = RadialGradient(
-    //   center: Alignment.center,
-    //   radius: 1.0,
-    //   colors: <Color>[
-    //     Color(0xff878787),
-    //     Color(0xFFaeff80),
-    //     Color(0xff3b7850),
-    //   ],
-    //   stops: <double>[0.25, 0.15, 0.6],
-    // );
-    //
-    // final Paint paint = Paint()..shader = gradient.createShader(rect);
     canvas.drawRect(rect, paint);
 
     // Rysowanie prostokąta z gradientem od szarego do białego
@@ -106,7 +94,27 @@ class BoardComponent extends RectangleComponent
     ];
 
     addAll(blocks);
-  }
+
+    Sprite buttonSprite = Sprite(await game.images.load("thinking.jpg"));
+    add(SpriteButtonComponent(
+      onPressed: () async {
+        var hint = game.solver.hint();
+        if (hint == null) return;
+        var ghostBlock = SpriteComponent(
+            sprite: Sprite(await game.images.load(hint.blockType.img)),
+            position: blocks[hint.place].position,
+        size: blocks[hint.place].size,
+        anchor: Anchor.center,
+        );
+        add(ghostBlock);
+        ghostBlock.opacity = 0.5;
+        ghostBlock.angle += degrees2Radians * 90 * hint.numOfRotations;
+      },
+      size: Vector2(100, 100),
+      button: buttonSprite,
+      buttonDown: buttonSprite
+    ));
+}
 
   BoardComponent copy() {
     BoardComponent copy = BoardComponent();
