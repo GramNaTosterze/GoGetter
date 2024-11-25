@@ -38,9 +38,9 @@ class Board {
     if (placeOnBoard == -1) return;
     gameBoard[placeOnBoard] = blockType;
     for (var direction in Direction.values) {
-      Set<String> vertices = _getVertices(
+      String? vertex = _getVertex(
           placeOnBoard /*board blocks get idx when created*/, direction);
-      for (var vertex in vertices) {
+      if (vertex != null) {
         _addEdge(vertex, 'b${blockType.id}$direction');
         _addEdge('b${blockType.id}$direction', vertex);
       }
@@ -153,7 +153,10 @@ class Board {
       String start = condition['start']!;
       String end = condition['end']!;
 
-      if (!isConnected(start, end)) {
+      String noConnection = condition['no_connection'] ?? 'false';
+      bool shouldConnect = !(bool.tryParse(noConnection) ?? false);
+
+      if ( isConnected(start, end) ^ shouldConnect ) {
         return LevelCondition.lose;
       }
     }
@@ -162,19 +165,17 @@ class Board {
   }
 
   /// Returns vertices of surrounding subgraph based on board block index
-  Set<String> _getVertices(int idx, Direction dir) {
-    Set<String> vertices = {};
+  String? _getVertex(int idx, Direction dir) {
     String? neighborVertex = _getNeighborVertex(idx, dir);
-    String? boardVertex = _getVertexFromBoard(idx, dir);
-
     if (neighborVertex != null) {
-      vertices.add(neighborVertex);
+      return neighborVertex;
     }
+    String? boardVertex = _getVertexFromBoard(idx, dir);
     if (boardVertex != null) {
-      vertices.add(boardVertex);
+      return boardVertex;
     }
 
-    return vertices;
+    return null;
   }
 
   String? _getNeighborVertex(int idx, Direction dir) {
