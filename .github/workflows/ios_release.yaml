@@ -1,4 +1,4 @@
-name: Android Release
+name: iOS Release
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -19,5 +19,4 @@ jobs:
         with:
           channel: stable
       - run: flutter pub get
-      - run: flutter build apk
-      - run: flutter build appbundle
+      - run: flutter build ios --release --no-codesign
