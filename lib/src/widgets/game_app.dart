@@ -7,7 +7,6 @@ import '../go_getter.dart';
 import 'levels_screen.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
-import 'package:flutter/services.dart';
 
 class GameApp extends StatefulWidget {
   final List<Map<String, String>> levelConditions;
@@ -164,9 +163,9 @@ class _GameAppState extends State<GameApp> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Text(
+                          const Text(
                             "Warunki ukończenia poziomu:",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -176,12 +175,15 @@ class _GameAppState extends State<GameApp> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: (game.currentLevelConditions ?? []).map((condition) {
-                              return Text(
-                                'Z ${condition['start']} do ${condition['end']}',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
+                              return Row(
+                                children: [
+                                  Image.asset('assets/images/board/${condition['start']}.png', width: 40, height: 40),
+                                  Image.asset('assets/images/UI/${
+                                      bool.tryParse(condition['no_connection'] ?? 'false') ?? true ? 'no_connection' : 'connection'
+                                  }.png', width: 40, height: 40),
+                                  Image.asset('assets/images/board/${condition['end']}.png', width: 40, height: 40),
+                                ],
+
                               );
                             }).toList(),
                           ),
@@ -198,6 +200,7 @@ class _GameAppState extends State<GameApp> {
                           title: "Level Completed",
                           subtitle: "Press Space or Enter to proceed",
                         ),
+                        "Hint_NoMoreMoves": (context, game) => const OverlayScreen(title: "No more Moves", subtitle: "No more valid moves"),
                       },
                       initialActiveOverlays: [],
                     ),

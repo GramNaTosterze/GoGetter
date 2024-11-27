@@ -34,3 +34,18 @@ flutter:
     - assets/images/board.png
     - assets/images/plansza.bmp
     - assets/images/thinking.jpg
+    - assets/images/board/u1.png
+    - assets/images/board/u2.png
+    - assets/images/board/u3.png
+    - assets/images/board/r1.png
+    - assets/images/board/r2.png
+    - assets/images/board/r3.png
+    - assets/images/board/l1.png
+    - assets/images/board/l2.png
+    - assets/images/board/l3.png
+    - assets/images/board/d1.png
+    - assets/images/board/d2.png
+    - assets/images/board/d3.png
+    - assets/images/UI/connection.png
+    - assets/images/UI/no_connection.png
+

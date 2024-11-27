@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
-import 'package:go_getter/src/components/path_block.dart';
 
 import '../models/models.dart';
 
@@ -73,14 +72,18 @@ class BoardComponent extends RectangleComponent
     super.onLoad();
     size = Vector2(game.width, game.height);
 
+    Vector2 blockSize = size / 6 + Vector2(10, 10);
+    Vector2 start = size / 2 - blockSize;
+
     add(SpriteComponent(
         sprite: Sprite(await game.images.load('plansza.bmp')),
         position: size / 2,
         size: size * 0.61,
         anchor: Anchor.center));
 
-    Vector2 blockSize = size / 6 + Vector2(10, 10);
-    Vector2 start = size / 2 - blockSize;
+
+    addObjectSprites(start, blockSize);
+
     blocks = [
       for (int i = 0; i < 9; i++)
         BlockComponent(
@@ -121,6 +124,51 @@ class BoardComponent extends RectangleComponent
     copy.blocks = List.from(blocks);
     copy.board = board.copy();
     return copy;
+  }
+
+  Future addObjectSprites(Vector2 start, Vector2 blockSize) async {
+    for (var i = 0; i < 3; i++) {
+      add(SpriteComponent(
+          sprite: Sprite(await game.images.load('board/u${i+1}.png')),
+          position: start - Vector2(0, blockSize.y * 1.25) +
+              Vector2(blockSize.x * i, 0),
+          size: blockSize,
+          anchor: Anchor.center
+      ));
+
+      for (var i = 0; i < 3; i++) {
+        add(SpriteComponent(
+            sprite: Sprite(await game.images.load('board/d${i+1}.png')),
+            position: start + Vector2(0, blockSize.y * 3.25) +
+                Vector2(blockSize.x * i, 0),
+            size: blockSize,
+            anchor: Anchor.center
+        ));
+      }
+
+      for (var i = 0; i < 3; i++) {
+        add(SpriteComponent(
+            sprite: Sprite(await game.images.load('board/l${i+1}.png')),
+            position: start - Vector2(blockSize.x * 1.25, 0) +
+                Vector2(0, blockSize.y * i),
+            size: blockSize,
+            anchor: Anchor.center
+        ));
+      }
+
+      for (var i = 0; i < 3; i++) {
+        add(SpriteComponent(
+            sprite: Sprite(await game.images.load('board/r${i+1}.png')),
+            position: start + Vector2(blockSize.x * 3.25, 0) +
+                Vector2(0, blockSize.y * i),
+            size: blockSize,
+            anchor: Anchor.center
+        ));
+      }
+    }
+
+
+
   }
 }
 
