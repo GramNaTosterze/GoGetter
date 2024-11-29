@@ -200,7 +200,7 @@ class _GameAppState extends State<GameApp> {
                           title: "Level Completed",
                           subtitle: "Press Space or Enter to proceed",
                         ),
-                        "Hint_NoMoreMoves": (context, game) => const OverlayScreen(title: "No more Moves", subtitle: "No more valid moves"),
+                        "Hint_NoMoreMoves": (context, game) => const OverlayScreen(title: "No valid Moves", subtitle: "Try different approach"),
                       },
                       initialActiveOverlays: [],
                     ),

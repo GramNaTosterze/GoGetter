@@ -101,8 +101,13 @@ class BoardComponent extends RectangleComponent
     Sprite buttonSprite = Sprite(await game.images.load("thinking.jpg"));
     add(SpriteButtonComponent(
       onPressed: () async {
-        var hint = game.solver.hint();
-        if (hint == null) return;
+        var hint = await game.solver.hint();
+        if (hint == null) {
+          game.overlays.add("Hint_NoMoreMoves");
+          Future.delayed(const Duration(seconds: 5),
+                  () => game.overlays.remove("Hint_NoMoreMoves"));
+          return;
+        }
         var ghostBlock = SpriteComponent(
             sprite: Sprite(await game.images.load(hint.blockType.img)),
             position: blocks[hint.place].position,
@@ -112,6 +117,8 @@ class BoardComponent extends RectangleComponent
         add(ghostBlock);
         ghostBlock.opacity = 0.5;
         ghostBlock.angle += degrees2Radians * 90 * hint.numOfRotations;
+        Future.delayed(const Duration(seconds: 5),
+                () => remove(ghostBlock));
       },
       size: Vector2(100, 100),
       button: buttonSprite,

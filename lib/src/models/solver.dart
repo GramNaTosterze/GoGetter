@@ -16,22 +16,22 @@ class Solver {
     required this.levelConditions
   });
 
-  Hint? hint() {
-    return solve().$1;
+  Future<Hint?> hint() async {
+    return (await solve()).$1;
   }
 
-  bool isSolvable() {
-    return solve().$2;
+  Future<bool> isSolvable() async {
+    return (await solve()).$2;
   }
 
-  (Hint?, bool) solve() {
+  Future<(Hint?, bool)> solve() async {
     return _solve(/*Blocks not placed on the board*/
         pathBlocks.where((pb) => pb.block == null).map((pb) => pb.blockType).toList(),
         board.copy());
   }
 
-  (Hint?, bool) _solve(List<BlockType> notPlaces, Board board) {
-     var boardState = board.gameState(levelConditions);
+  Future<(Hint?, bool)> _solve(List<BlockType> notPlaces, Board board) async {
+    var boardState = board.gameState(levelConditions);
     if (boardState == LevelCondition.lose || notPlaces.isEmpty) {
       return (null, boardState == LevelCondition.win);
     }
@@ -45,10 +45,14 @@ class Solver {
           board.place(block, place);
           var numOfRotations = 0;
           for (var _ in Direction.values) {
-            if (_solve(remaining, board.copy()).$2) { return (Hint(blockType: block, place: place, numOfRotations: numOfRotations), true); }
+            var isSolved = await _solve(remaining, board.copy());
+            if (isSolved.$2) {
+              return (Hint(blockType: block, place: place, numOfRotations: numOfRotations), true);
+            }
             board.rotate(block);
             numOfRotations++;
           }
+          board.remove(block);
         }
       }
     }
