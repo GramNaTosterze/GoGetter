@@ -1,0 +1,4 @@
+<resources>
+    <!-- Zamień 0000000000 na swój rzeczywisty Game Services Project ID -->
+    <string name="game_services_project_id">925121142241</string>
+</resources>

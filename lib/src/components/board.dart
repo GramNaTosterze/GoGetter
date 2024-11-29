@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 
 import '../go_getter.dart';
 import 'block.dart';
-
 
 class BoardComponent extends RectangleComponent
     with HasGameReference<GoGetter> {
@@ -42,18 +42,6 @@ class BoardComponent extends RectangleComponent
   void render(Canvas canvas) {
     // Rysowanie tła z gradientem radialnym
     Rect rect = Rect.fromLTWH(0, 0, size.x, size.y);
-    const RadialGradient gradient = RadialGradient(
-      center: Alignment.center,
-      radius: 1.0,
-      colors: <Color>[
-        Color(0xff878787),
-        Color(0xFFaeff80),
-        Color(0xff3b7850),
-      ],
-      stops: <double>[0.25, 0.15, 0.6],
-    );
-
-    final Paint paint = Paint()..shader = gradient.createShader(rect);
     canvas.drawRect(rect, paint);
 
     // Rysowanie prostokąta z gradientem od szarego do białego
@@ -84,14 +72,18 @@ class BoardComponent extends RectangleComponent
     super.onLoad();
     size = Vector2(game.width, game.height);
 
-    add(SpriteComponent(
-        sprite: Sprite(await game.images.load('board.png')),
-        position: size / 2,
-        size: size * 0.8,
-        anchor: Anchor.center));
-
     Vector2 blockSize = size / 6 + Vector2(10, 10);
     Vector2 start = size / 2 - blockSize;
+
+    add(SpriteComponent(
+        sprite: Sprite(await game.images.load('plansza.bmp')),
+        position: size / 2,
+        size: size * 0.61,
+        anchor: Anchor.center));
+
+
+    addObjectSprites(start, blockSize);
+
     blocks = [
       for (int i = 0; i < 9; i++)
         BlockComponent(
@@ -100,18 +92,90 @@ class BoardComponent extends RectangleComponent
               position +
               Vector2(blockSize.x * (i % 3).toDouble(),
                   blockSize.y * (i ~/ 3).toDouble()),
-          color: const Color(0xff157005).withOpacity(0.8),
+          color: const Color(0xff157005).withOpacity(0),
         )
     ];
 
     addAll(blocks);
-  }
+
+    Sprite buttonSprite = Sprite(await game.images.load("thinking.jpg"));
+    add(SpriteButtonComponent(
+      onPressed: () async {
+        var hint = await game.solver.hint();
+        if (hint == null) {
+          game.overlays.add("Hint_NoMoreMoves");
+          Future.delayed(const Duration(seconds: 5),
+                  () => game.overlays.remove("Hint_NoMoreMoves"));
+          return;
+        }
+        var ghostBlock = SpriteComponent(
+            sprite: Sprite(await game.images.load(hint.blockType.img)),
+            position: blocks[hint.place].position,
+        size: blocks[hint.place].size,
+        anchor: Anchor.center,
+        );
+        add(ghostBlock);
+        ghostBlock.opacity = 0.5;
+        ghostBlock.angle += degrees2Radians * 90 * hint.numOfRotations;
+        Future.delayed(const Duration(seconds: 5),
+                () => remove(ghostBlock));
+      },
+      size: Vector2(100, 100),
+      button: buttonSprite,
+      buttonDown: buttonSprite
+    ));
+}
 
   BoardComponent copy() {
     BoardComponent copy = BoardComponent();
     copy.blocks = List.from(blocks);
     copy.board = board.copy();
     return copy;
+  }
+
+  Future addObjectSprites(Vector2 start, Vector2 blockSize) async {
+    for (var i = 0; i < 3; i++) {
+      add(SpriteComponent(
+          sprite: Sprite(await game.images.load('board/u${i+1}.png')),
+          position: start - Vector2(0, blockSize.y * 1.25) +
+              Vector2(blockSize.x * i, 0),
+          size: blockSize,
+          anchor: Anchor.center
+      ));
+
+      for (var i = 0; i < 3; i++) {
+        add(SpriteComponent(
+            sprite: Sprite(await game.images.load('board/d${i+1}.png')),
+            position: start + Vector2(0, blockSize.y * 3.25) +
+                Vector2(blockSize.x * i, 0),
+            size: blockSize,
+            anchor: Anchor.center
+        ));
+      }
+
+      for (var i = 0; i < 3; i++) {
+        add(SpriteComponent(
+            sprite: Sprite(await game.images.load('board/l${i+1}.png')),
+            position: start - Vector2(blockSize.x * 1.25, 0) +
+                Vector2(0, blockSize.y * i),
+            size: blockSize,
+            anchor: Anchor.center
+        ));
+      }
+
+      for (var i = 0; i < 3; i++) {
+        add(SpriteComponent(
+            sprite: Sprite(await game.images.load('board/r${i+1}.png')),
+            position: start + Vector2(blockSize.x * 3.25, 0) +
+                Vector2(0, blockSize.y * i),
+            size: blockSize,
+            anchor: Anchor.center
+        ));
+      }
+    }
+
+
+
   }
 }
 

@@ -95,8 +95,6 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onDragStart(event);
     priority = 10;
     _startPos = position.clone();
-    block?.block = null;
-    block = null;
   }
 
   /// Removes block from the board
@@ -112,7 +110,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   void onDragEnd(DragEndEvent event) {
     super.onDragEnd(event);
     priority = 0;
-    _place();
+    place();
     if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
         LevelCondition.win) {
       game.handleLevelCompleted();
@@ -133,7 +131,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
   /// Places block on the board
   ///
   /// If there is already block present it swaps their places
-  void _place() {
+  void place() {
     if (isColliding) {
       BlockComponent closest = getClosestBoardBlock();
       if (!closest.isEmpty()) {
@@ -146,7 +144,9 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
         move(closest);
       }
     } else if(block != null) {
+      block?.block = null;
       boardComponent.board.remove(blockType);
+      block = null;
     }
   }
 
