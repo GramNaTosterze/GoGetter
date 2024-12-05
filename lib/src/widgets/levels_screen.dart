@@ -35,6 +35,7 @@ class LevelsScreenState extends State<LevelsScreen> {
       addCustomLevel([
         {'start': 'u3', 'end': 'r1'},
         {'start': 'r3', 'end': 'd3'},
+        {'start': 'l3', 'end': 'd1', 'no_connection': 'true'},
       ]);
 
       addCustomLevel([
