@@ -1,20 +1,31 @@
 import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
 
 class PlayGamesService {
   static const MethodChannel _channel = MethodChannel('play_games_service');
 
   static Future<bool> isAuthenticated() async {
-    final bool isAuthenticated = await _channel.invokeMethod('isAuthenticated');
-    return isAuthenticated;
+    if (Platform.isAndroid) {
+      final bool isAuthenticated = await _channel.invokeMethod(
+          'isAuthenticated');
+      return isAuthenticated;
+    }
+    return false;
   }
 
   static Future<bool> signIn() async {
-    final bool success = await _channel.invokeMethod('signIn');
-    return success;
+    if (Platform.isAndroid) {
+      final bool success = await _channel.invokeMethod('signIn');
+      return success;
+    }
+    return false;
   }
 
   static Future<String?> getPlayerId() async {
-    final String? playerId = await _channel.invokeMethod('getPlayerId');
-    return playerId;
+    if (Platform.isAndroid) {
+      final String? playerId = await _channel.invokeMethod('getPlayerId');
+      return playerId;
+    }
+    return "";
   }
 }
