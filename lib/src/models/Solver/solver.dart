@@ -1,6 +1,6 @@
 import 'package:go_getter/src/components/components.dart';
 
-import 'models.dart';
+import '../models.dart';
 
 ///Solver class
 ///
@@ -8,7 +8,7 @@ import 'models.dart';
 class Solver {
   Board board;
   List<PathComponent> pathBlocks;
-  List<Map<String, String>> levelConditions;
+  Level levelConditions;
 
   Solver({
     required this.board,

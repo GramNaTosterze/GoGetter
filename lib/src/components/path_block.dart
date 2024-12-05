@@ -6,6 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_getter/src/components/components.dart';
+import 'package:go_getter/src/models/Levels/level.dart';
 import 'block.dart';
 
 /// Block that describes the Path.
@@ -79,7 +80,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     sprite.angle += degrees2Radians * 90;
     priority = 9;
     boardComponent.board.rotate(blockType);
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+    if (boardComponent.board.gameState(game.currentLevelConditions ?? Level([])) ==
         LevelCondition.win) {
       game.handleLevelCompleted();
     }
@@ -111,7 +112,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     super.onDragEnd(event);
     priority = 0;
     place();
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+    if (boardComponent.board.gameState(game.currentLevelConditions ?? Level([])) ==
         LevelCondition.win) {
       game.handleLevelCompleted();
     }

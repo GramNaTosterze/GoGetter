@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:flame/cache.dart';
 import 'package:flutter/material.dart';
+import 'package:go_getter/src/models/Levels/level.dart';
 import 'game_app.dart';
 import '../components/board.dart';
 
@@ -13,42 +17,29 @@ class LevelsScreenState extends State<LevelsScreen> {
   late final BoardComponent board;
 
   static List<int> completedLevels = [];
-  static List<Map<String, dynamic>> levels = [];
+  static final List<Level> _levels = [];
 
   LevelsScreenState() {
     board = BoardComponent();
   }
 
-  static List<List<Map<String, String>>> getLevels() {
-    return levels.map<List<Map<String, String>>>((level) => level['conditions'] as List<Map<String, String>>).toList();
+  static List<Level> getLevels() {
+    return _levels;
   }
 
-  void addCustomLevel(List<Map<String, String>> conditions) {
-    levels.add({'conditions': conditions});
+  void addLevel(Level level) {
+    _levels.add(level);
   }
 
   @override
   void initState() {
     super.initState();
-
-    if (levels.isEmpty) {
-      addCustomLevel([
-        {'start': 'u3', 'end': 'r1'},
-        {'start': 'r3', 'end': 'd3'},
-        {'start': 'l3', 'end': 'd1', 'no_connection': 'true'},
-      ]);
-
-      addCustomLevel([
-        {'start': 'd2', 'end': 'l1'},
-        {'start': 'r1', 'end': 'd1'},
-      ]);
-
-      addCustomLevel([
-        {'start': 'd2', 'end': 'r2'},
-        {'start': 'd1', 'end': 'd3'},
-        {'start': 'r2', 'end': 'u3'},
-      ]);
-    }
+    AssetsCache().readJson("levels/junior/challenge_17.json").then((result) {
+      var level = Level.fromJson(result);
+      setState(() {
+        addLevel(level);
+      });
+    });
   }
 
   static void markLevelAsCompleted(int levelIndex) {
@@ -83,10 +74,10 @@ class LevelsScreenState extends State<LevelsScreen> {
             mainAxisSpacing: 10.0,
             childAspectRatio: 2,
           ),
-          itemCount: levels.length,
+          itemCount: _levels.length,
           itemBuilder: (context, index) {
-            final level = levels[index];
-            final conditions = level['conditions']!;
+            final level = _levels[index];
+            final conditions = level;
 
             bool isCompleted = completedLevels.contains(index);
 

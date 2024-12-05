@@ -2,14 +2,16 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_getter/src/models/Levels/condition.dart';
 
 import '../go_getter.dart';
+import '../models/Levels/level.dart';
 import 'levels_screen.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
 
 class GameApp extends StatefulWidget {
-  final List<Map<String, String>> levelConditions;
+  final Level levelConditions;
   final VoidCallback onLevelCompleted;
   final int selectedLevel;
 
@@ -174,14 +176,14 @@ class _GameAppState extends State<GameApp> {
                           // Pobieranie aktualnych warunków poziomu dynamicznie z game.currentLevelConditions
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: (game.currentLevelConditions ?? []).map((condition) {
+                            children: game.currentLevelConditions!.conditions.map((condition) {
                               return Row(
                                 children: [
-                                  Image.asset('assets/images/board/${condition['start']}.png', width: 40, height: 40),
+                                  Image.asset('assets/images/board/${condition.start}.png', width: 40, height: 40),
                                   Image.asset('assets/images/UI/${
-                                      bool.tryParse(condition['no_connection'] ?? 'false') ?? true ? 'no_connection' : 'connection'
+                                      condition.shouldConnect ? 'connection' : 'no_connection'
                                   }.png', width: 40, height: 40),
-                                  Image.asset('assets/images/board/${condition['end']}.png', width: 40, height: 40),
+                                  Image.asset('assets/images/board/${condition.end}.png', width: 40, height: 40),
                                 ],
 
                               );

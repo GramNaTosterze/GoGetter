@@ -1,5 +1,5 @@
 
-import '../components/components.dart';
+import '../../components/components.dart';
 
 class Hint {
   BlockType blockType;
