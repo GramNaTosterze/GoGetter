@@ -1,6 +1,7 @@
 import 'package:graphs/graphs.dart';
 
 import '../components/components.dart';
+import '../widgets/game_app.dart';
 
 ///Board class
 ///
@@ -91,6 +92,7 @@ class Board {
     for (var vertex in blockType.nodes.keys) {
       nodes[vertex] = newSubgraph[vertex]!;
     }
+
   }
 
   int blockPos(BlockType block) => gameBoard.keys.firstWhere((p) => gameBoard[p] == block, orElse: () => -1 );

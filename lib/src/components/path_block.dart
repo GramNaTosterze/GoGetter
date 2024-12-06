@@ -119,7 +119,14 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    position += event.localDelta;
+    Vector2 tmp = position;
+    tmp += event.localDelta;
+    if (tmp.x >= size.x/2 &&
+        tmp.x + size.x/2 <= 1600 &&
+        tmp.y >= size.y/2 &&
+        tmp.y + size.y/2 <= 1600) {
+      position = tmp;
+    }
   }
 
   /// moves block to original position

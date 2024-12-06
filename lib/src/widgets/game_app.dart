@@ -107,6 +107,7 @@ class _GameAppState extends State<GameApp> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,93 +127,88 @@ class _GameAppState extends State<GameApp> {
             ),
           ),
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Container(
-                     decoration: const BoxDecoration(
-                      // gradient: LinearGradient(
-                      //   begin: Alignment.topCenter,
-                      //   end: Alignment.bottomRight,
-                      //   colors: [
-                      //     Color(0xffa9d6e5),
-                      //     Color(0xfff2e8cf),
-                      //   ],
-                      //  ),
-                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Score: 0", // Możesz dynamicznie ustawiać wynik
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.pause),
-                                onPressed: _showPauseMenu,
-                                color: Colors.white,
-                              ),
-                            ],
+            bottom: false,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // Górny panel z wynikiem i pauzą
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Score: 0",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.pause),
+                      onPressed: _showPauseMenu,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Warunki ukończenia poziomu:",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                // Warunki poziomu
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: (game.currentLevelConditions ?? []).map((condition) {
+                    return Row(
+                      children: [
+                        Image.asset('assets/images/board/${condition['start']}.png', width: 40, height: 40),
+                        Image.asset(
+                          'assets/images/UI/${
+                              bool.tryParse(condition['no_connection'] ?? 'false') ?? true ? 'no_connection' : 'connection'
+                          }.png',
+                          width: 40,
+                          height: 40,
+                        ),
+                        Image.asset('assets/images/board/${condition['end']}.png', width: 40, height: 40),
+                      ],
+                    );
+                  }).toList(),
+                ),
+                Expanded(
+                  child: Transform.translate(
+                    offset: const Offset(0, 100),
+                    child: GestureDetector(
+                      onTap: () {
+                        if (game.playState == PlayState.levelCompleted) {
+                          _proceedToNextLevel();
+                        }
+                      },
+                      child: GameWidget(
+                        game: game,
+                        overlayBuilderMap: {
+                          PlayState.levelCompleted.name: (context, game) =>
+                          const OverlayScreen(
+                            title: "Level Completed",
+                            subtitle: "Press Space or Enter to proceed",
                           ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "Warunki ukończenia poziomu:",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          // Pobieranie aktualnych warunków poziomu dynamicznie z game.currentLevelConditions
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: (game.currentLevelConditions ?? []).map((condition) {
-                              return Row(
-                                children: [
-                                  Image.asset('assets/images/board/${condition['start']}.png', width: 40, height: 40),
-                                  Image.asset('assets/images/UI/${
-                                      bool.tryParse(condition['no_connection'] ?? 'false') ?? true ? 'no_connection' : 'connection'
-                                  }.png', width: 40, height: 40),
-                                  Image.asset('assets/images/board/${condition['end']}.png', width: 40, height: 40),
-                                ],
-
-                              );
-                            }).toList(),
-                          ),
-                        ],
+                          "Hint_NoMoreMoves": (context, game) =>
+                          const OverlayScreen(title: "No valid Moves", subtitle: "Try different approach"),
+                        },
+                        initialActiveOverlays: [],
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: GameWidget(
-                      game: game,
-                      overlayBuilderMap: {
-                        PlayState.levelCompleted.name: (context, game) =>
-                        const OverlayScreen(
-                          title: "Level Completed",
-                          subtitle: "Press Space or Enter to proceed",
-                        ),
-                        "Hint_NoMoreMoves": (context, game) => const OverlayScreen(title: "No valid Moves", subtitle: "Try different approach"),
-                      },
-                      initialActiveOverlays: [],
-                    ),
-                  ),
-
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
   }
-}
 
+
+}

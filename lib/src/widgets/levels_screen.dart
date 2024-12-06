@@ -93,6 +93,7 @@ class LevelsScreenState extends State<LevelsScreen> {
             return ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: isCompleted ? Colors.green : Colors.blue,
+                padding: const EdgeInsets.all(8), // Dodane marginesy wewnętrzne
               ),
               onPressed: () {
                 Navigator.push(
@@ -108,8 +109,15 @@ class LevelsScreenState extends State<LevelsScreen> {
                   ),
                 );
               },
-              child: Text('Poziom ${index + 1}'),
+              child: Text(
+                '${index + 1}',
+                style: const TextStyle(
+                  fontSize: 16, // Zmniejszony rozmiar tekstu
+                  color: Colors.white, // Kolor kontrastujący z tłem
+                ),
+              ),
             );
+
           },
         ),
       ),

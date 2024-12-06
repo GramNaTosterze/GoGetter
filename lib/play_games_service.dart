@@ -17,4 +17,14 @@ class PlayGamesService {
     final String? playerId = await _channel.invokeMethod('getPlayerId');
     return playerId;
   }
+
+  static Future<bool> saveGame(Uint8List data) async {
+    final bool success = await _channel.invokeMethod('saveGame', {'data': data});
+    return success;
+  }
+
+  static Future<Uint8List?> loadGame() async {
+    final Uint8List? data = await _channel.invokeMethod('loadGame');
+    return data;
+  }
 }

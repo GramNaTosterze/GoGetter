@@ -36,7 +36,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   }
 
   VoidCallback? onLevelCompleted;
-  VoidCallback? onLevelChanged; // Nowa funkcja, aby poinformować o zmianie poziomu
+  VoidCallback? onLevelChanged;
 
   List<Map<String, String>>? currentLevelConditions;
   late int _currentLevel;
@@ -60,7 +60,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       for (var blockType in BlockType.values)
         PathComponent(
           blockType,
-          position: Vector2(200.0 * blockType.index, 1500.0),
+          position: Vector2(150.0 * blockType.index + 200, 1400.0),
           boardComponent: boardComponent,
         )
     ];
@@ -103,7 +103,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
         stopGame();
         startGame(_levels, _currentLevel);
         if (onLevelChanged != null) {
-          onLevelChanged!(); // Informujemy o zmianie poziomu
+          onLevelChanged!();
         }
       } else {
         if (kDebugMode) {
@@ -121,8 +121,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   KeyEventResult onKeyEvent(KeyEvent event,
       Set<LogicalKeyboardKey> keysPressed) {
     if (playState == PlayState.levelCompleted &&
-        (event.logicalKey == LogicalKeyboardKey.space ||
-            event.logicalKey == LogicalKeyboardKey.enter)) {
+        (event.logicalKey != LogicalKeyboardKey.control)) {
       _proceedToNextLevel();
       return KeyEventResult.handled;
     }
