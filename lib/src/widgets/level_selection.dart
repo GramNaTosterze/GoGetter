@@ -89,16 +89,18 @@ class LevelSelectionState extends State<LevelSelection> {
         style: ElevatedButton.styleFrom(
           backgroundColor: completedLevels.contains(levelIdx) ? Colors.green : Colors.blue,
         ),
-        onPressed: () {
-          loadLevel(e);
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) => GameApp(
-              onLevelCompleted: () {
-                markLevelAsCompleted(levelIdx);
-              },
-              selectedLevel: currentLevel ?? Level(-1, []),
-            ),
-          ));
+        onPressed: () async {
+          await loadLevel(e);
+          if (context.mounted) {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => GameApp(
+                onLevelCompleted: () {
+                  markLevelAsCompleted(levelIdx);
+                },
+                selectedLevel: currentLevel ?? Level(-1, []),
+              ),
+            ));
+          }
         },
         child: Text('$levelIdx'),
       );
