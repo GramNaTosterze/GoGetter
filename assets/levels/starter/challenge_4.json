@@ -4,6 +4,11 @@
       "start": "u2",
       "end": "l1",
       "shouldConnect": true
+    },
+    {
+      "start": "u2",
+      "end": "d1",
+      "shouldConnect": true
     }
   ]
 }

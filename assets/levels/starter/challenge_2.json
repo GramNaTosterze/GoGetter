@@ -1,8 +1,8 @@
 {
   "conditions": [
     {
-      "start": "u2",
-      "end": "l1",
+      "start": "r2",
+      "end": "u2",
       "shouldConnect": true
     }
   ]

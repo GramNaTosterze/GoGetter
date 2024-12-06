@@ -1,23 +1,19 @@
 import 'package:flame/game.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_getter/src/models/Levels/condition.dart';
+import 'package:go_getter/src/widgets/level_selection.dart';
 
 import '../go_getter.dart';
 import '../models/Levels/level.dart';
-import 'levels_screen.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
 
 class GameApp extends StatefulWidget {
-  final Level levelConditions;
   final VoidCallback onLevelCompleted;
-  final int selectedLevel;
+  final Level selectedLevel;
 
   const GameApp({
     super.key,
-    required this.levelConditions,
     required this.onLevelCompleted,
     required this.selectedLevel,
   });
@@ -45,29 +41,23 @@ class _GameAppState extends State<GameApp> {
       setState(() {}); // Wywołanie setState, aby odświeżyć UI
     };
 
-    game.startGame(LevelsScreenState.getLevels(), widget.selectedLevel);
+    game.startGame(widget.selectedLevel);
   }
 
-  void _proceedToNextLevel() {
-    int nextLevel = widget.selectedLevel + 1;
-    if (nextLevel < LevelsScreenState.getLevels().length) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GameApp(
-            levelConditions: LevelsScreenState.getLevels()[nextLevel],
-            onLevelCompleted: () {
-              LevelsScreenState.markLevelAsCompleted(nextLevel);
-            },
-            selectedLevel: nextLevel,
-          ),
+  void _proceedToNextLevel() async {
+    await LevelSelectionState.loadNext();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameApp(
+          onLevelCompleted: () {
+            LevelSelectionState.markLevelAsCompleted(LevelSelectionState.currentLevel!.idx);
+          },
+          selectedLevel: LevelSelectionState.currentLevel ?? Level(-1, []),
         ),
-      );
-    } else {
-      if (kDebugMode) {
-        print("Wszystkie poziomy ukończone");
-      }
-    }
+      ),
+    );
   }
 
   KeyEventResult onKeyEvent(
@@ -174,21 +164,30 @@ class _GameAppState extends State<GameApp> {
                             ),
                           ),
                           // Pobieranie aktualnych warunków poziomu dynamicznie z game.currentLevelConditions
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: game.currentLevelConditions!.conditions.map((condition) {
-                              return Row(
-                                children: [
-                                  Image.asset('assets/images/board/${condition.start}.png', width: 40, height: 40),
-                                  Image.asset('assets/images/UI/${
-                                      condition.shouldConnect ? 'connection' : 'no_connection'
-                                  }.png', width: 40, height: 40),
-                                  Image.asset('assets/images/board/${condition.end}.png', width: 40, height: 40),
-                                ],
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                            children: ['u1', 'u2', 'u3', 'd1', 'd2', 'd3', 'r1', 'r2', 'r3', 'l1', 'l2', 'l3']
+                                .map((v) {
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: game.currentLevel.conditions
+                                        .where((condition) => condition.start == v)
+                                        .map((condition) {
+                                      return Row(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Image.asset('assets/images/board/${condition.start}.png', width: 40, height: 40),
+                                          Image.asset('assets/images/UI/${
+                                              condition.shouldConnect ? 'connection' : 'no_connection'
+                                          }.png', width: 40, height: 40),
+                                          Image.asset('assets/images/board/${condition.end}.png', width: 40, height: 40),
+                                        ],
 
-                              );
+                                      );
+                                    }).toList(),
+                                  );
                             }).toList(),
-                          ),
+                          )
                         ],
                       ),
                     ),

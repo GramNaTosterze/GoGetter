@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "start": "l1",
+      "end": "u1",
+      "shouldConnect": true
+    },
+    {
+      "start": "d1",
+      "end": "u1",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "u3",
+      "shouldConnect": true
+    },
+    {
+      "start": "d1",
+      "end": "u3",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "d3",
+      "shouldConnect": true
+    },
+    {
+      "start": "d1",
+      "end": "d3",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "r3",
+      "shouldConnect": true
+    },
+    {
+      "start": "d1",
+      "end": "r3",
+      "shouldConnect": true
+    }
+  ]
+}

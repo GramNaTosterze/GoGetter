@@ -1,7 +1,6 @@
 import 'package:graphs/graphs.dart';
 
 import '../components/components.dart';
-import 'Levels/Condition.dart';
 import 'Levels/level.dart';
 
 ///Board class
