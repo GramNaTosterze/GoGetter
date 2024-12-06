@@ -13,6 +13,7 @@ dependencies:
   flutter_animate: ^4.5.0
   google_fonts: ^6.2.1
   graphs: ^2.3.2
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +26,7 @@ flutter:
     - assets/images/
     - assets/images/board/
     - assets/images/UI/
+    - assets/images/levels/
     - assets/levels/starter/
     - assets/levels/junior/
     - assets/levels/master/

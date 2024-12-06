@@ -92,7 +92,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     overlays.add(PlayState.levelCompleted.name);
   }
 
-  void _proceedToNextLevel() async {
+  Future _proceedToNextLevel() async {
     if (playState == PlayState.levelCompleted) {
       if (LevelSelectionState.currentLevel != null) {
         stopGame();

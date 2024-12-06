@@ -163,31 +163,7 @@ class _GameAppState extends State<GameApp> {
                               color: Colors.white,
                             ),
                           ),
-                          // Pobieranie aktualnych warunków poziomu dynamicznie z game.currentLevelConditions
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                            children: ['u1', 'u2', 'u3', 'd1', 'd2', 'd3', 'r1', 'r2', 'r3', 'l1', 'l2', 'l3']
-                                .map((v) {
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: game.currentLevel.conditions
-                                        .where((condition) => condition.start == v)
-                                        .map((condition) {
-                                      return Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Image.asset('assets/images/board/${condition.start}.png', width: 40, height: 40),
-                                          Image.asset('assets/images/UI/${
-                                              condition.shouldConnect ? 'connection' : 'no_connection'
-                                          }.png', width: 40, height: 40),
-                                          Image.asset('assets/images/board/${condition.end}.png', width: 40, height: 40),
-                                        ],
-
-                                      );
-                                    }).toList(),
-                                  );
-                            }).toList(),
-                          )
+                          displayCondition()
                         ],
                       ),
                     ),
@@ -214,6 +190,38 @@ class _GameAppState extends State<GameApp> {
         ),
       ),
     );
+  }
+
+  Widget displayCondition() {
+    try {
+      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 200);
+    }
+    catch (_) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: ['u1', 'u2', 'u3', 'd1', 'd2', 'd3', 'r1', 'r2', 'r3', 'l1', 'l2', 'l3']
+            .map((v) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: game.currentLevel.conditions
+                .where((condition) => condition.start == v)
+                .map((condition) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/board/${condition.start}.png', width: 40, height: 40),
+                  Image.asset('assets/images/UI/${
+                      condition.shouldConnect ? 'connection' : 'no_connection'
+                  }.png', width: 40, height: 40),
+                  Image.asset('assets/images/board/${condition.end}.png', width: 40, height: 40),
+                ],
+
+              );
+            }).toList(),
+          );
+        }).toList(),
+      );
+    }
   }
 }
 
