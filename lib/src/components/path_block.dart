@@ -79,7 +79,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     sprite.angle += degrees2Radians * 90;
     priority = 9;
     boardComponent.board.rotate(blockType);
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+    if (boardComponent.board.gameState(game.currentLevel) ==
         LevelCondition.win) {
       game.handleLevelCompleted();
     }
@@ -97,21 +97,12 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     _startPos = position.clone();
   }
 
-  /// Removes block from the board
-  void _pickup() {
-    if (block != null) {
-      block?.block = null;
-      boardComponent.board.remove(blockType);
-      block = null;
-    }
-  }
-
   @override
   void onDragEnd(DragEndEvent event) {
     super.onDragEnd(event);
     priority = 0;
     place();
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+    if (boardComponent.board.gameState(game.currentLevel) ==
         LevelCondition.win) {
       game.handleLevelCompleted();
     }

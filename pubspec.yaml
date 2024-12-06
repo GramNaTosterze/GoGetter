@@ -22,30 +22,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/block1.png
-    - assets/images/block2.png
-    - assets/images/block3.png
-    - assets/images/block4.png
-    - assets/images/block5.png
-    - assets/images/block6.png
-    - assets/images/block7.png
-    - assets/images/block8.png
-    - assets/images/block9.png
-    - assets/images/board.png
-    - assets/images/plansza.bmp
-    - assets/images/thinking.jpg
-    - assets/images/board/u1.png
-    - assets/images/board/u2.png
-    - assets/images/board/u3.png
-    - assets/images/board/r1.png
-    - assets/images/board/r2.png
-    - assets/images/board/r3.png
-    - assets/images/board/l1.png
-    - assets/images/board/l2.png
-    - assets/images/board/l3.png
-    - assets/images/board/d1.png
-    - assets/images/board/d2.png
-    - assets/images/board/d3.png
-    - assets/images/UI/connection.png
-    - assets/images/UI/no_connection.png
+    - assets/images/
+    - assets/images/board/
+    - assets/images/UI/
+    - assets/levels/starter/
+    - assets/levels/junior/
+    - assets/levels/master/
+    - assets/levels/expert/
 

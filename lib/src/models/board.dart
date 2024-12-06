@@ -1,6 +1,7 @@
 import 'package:graphs/graphs.dart';
 
 import '../components/components.dart';
+import 'Levels/level.dart';
 import '../widgets/game_app.dart';
 
 ///Board class
@@ -92,7 +93,6 @@ class Board {
     for (var vertex in blockType.nodes.keys) {
       nodes[vertex] = newSubgraph[vertex]!;
     }
-
   }
 
   int blockPos(BlockType block) => gameBoard.keys.firstWhere((p) => gameBoard[p] == block, orElse: () => -1 );
@@ -142,7 +142,7 @@ class Board {
   /// win meaning that all conditions are met
   /// lose - current board configuration is invalid
   /// none - incomplete board
-  LevelCondition gameState(List<Map<String, String>> levelConditions) {
+  LevelCondition gameState(Level levelConditions) {
     if (_hasDeadEnds()) return LevelCondition.lose;
 
     for (var i = 0; i < 9; i++) {
@@ -151,14 +151,9 @@ class Board {
       }
     }
 
-    for (var condition in levelConditions) {
-      String start = condition['start']!;
-      String end = condition['end']!;
+    for (var condition in levelConditions.conditions) {
 
-      String noConnection = condition['no_connection'] ?? 'false';
-      bool shouldConnect = !(bool.tryParse(noConnection) ?? false);
-
-      if ( isConnected(start, end) ^ shouldConnect ) {
+      if ( isConnected(condition.start, condition.end) ^ condition.shouldConnect ) {
         return LevelCondition.lose;
       }
     }

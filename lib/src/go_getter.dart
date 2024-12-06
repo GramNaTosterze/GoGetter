@@ -8,6 +8,7 @@ import 'package:flame/input.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_getter/src/widgets/level_selection.dart';
 import 'components/components.dart';
 import 'config.dart';
 import 'models/models.dart';
@@ -38,23 +39,18 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   VoidCallback? onLevelCompleted;
   VoidCallback? onLevelChanged;
 
-  List<Map<String, String>>? currentLevelConditions;
-  late int _currentLevel;
-  List<List<Map<String, String>>> _levels = [];
+  late Level currentLevel;
 
   double get width => size.x;
 
   double get height => size.y;
 
-  void startGame(List<List<Map<String, String>>> levels, int currentLevel) {
-    _levels = levels;
-    _currentLevel = currentLevel;
+  void startGame(Level currentLevel) {
+    this.currentLevel = currentLevel;
     playState = PlayState.playing;
 
     boardComponent = BoardComponent();
     world.add(boardComponent);
-
-    currentLevelConditions = _levels[_currentLevel];
     // Adding each type of pathblock to the board
     pathBlocks = [
       for (var blockType in BlockType.values)
@@ -69,7 +65,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     solver = Solver(
         board: boardComponent.board,
         pathBlocks: pathBlocks,
-        levelConditions: currentLevelConditions ?? []
+        levelConditions: currentLevel
     );
   }
 
@@ -96,12 +92,15 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     overlays.add(PlayState.levelCompleted.name);
   }
 
-  void _proceedToNextLevel() {
+  void _proceedToNextLevel() async {
     if (playState == PlayState.levelCompleted) {
-      _currentLevel++;
-      if (_currentLevel < _levels.length) {
+      if (LevelSelectionState.currentLevel != null) {
         stopGame();
-        startGame(_levels, _currentLevel);
+
+        await LevelSelectionState.loadNext();
+        currentLevel = LevelSelectionState.currentLevel!;
+
+        startGame(currentLevel);
         if (onLevelChanged != null) {
           onLevelChanged!();
         }
@@ -140,6 +139,6 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
   void reset() {
     stopGame();
-    startGame(_levels, _currentLevel);
+    startGame(currentLevel);
   }
 }
