@@ -53,6 +53,7 @@ class LevelSelectionState extends State<LevelSelection> {
   late final List<ElevatedButton> levelButtons;
 
   static List<int> completedLevels = [];
+  static Map<int, int> bestScores = {};
   final List<String> _levels = [];
 
   static Level? currentLevel;

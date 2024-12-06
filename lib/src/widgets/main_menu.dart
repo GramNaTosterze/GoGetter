@@ -74,33 +74,33 @@ class _MainMenuState extends State<MainMenu> {
                 Text(
                   'Witaj, Player ID: $_playerId',
                   style: const TextStyle(color: Colors.white),
-                )
-              else
-                ElevatedButton(
-                  onPressed: () async {
-                    bool signedIn = await PlayGamesService.signIn();
-                    if (signedIn) {
-                      String? playerId = await PlayGamesService.getPlayerId();
-                      setState(() {
-                        _isAuthenticated = true;
-                        _playerId = playerId;
-                      });
-                    }
-                  },
-                  child: const Text('Zaloguj się do Play Games'),
                 ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isAuthenticated
-                    ? () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => const GameApp()),
-                  // );
-                }
-                    : null, // Przycisk nieaktywny, jeśli niezalogowany
-                child: const Text('Start Game'),
-              ),
+              // else
+              //   ElevatedButton(
+              //     onPressed: () async {
+              //       bool signedIn = await PlayGamesService.signIn();
+              //       if (signedIn) {
+              //         String? playerId = await PlayGamesService.getPlayerId();
+              //         setState(() {
+              //           _isAuthenticated = true;
+              //           _playerId = playerId;
+              //         });
+              //       }
+              //     },
+              //     child: const Text('Zaloguj się do Play Games'),
+              //   ),
+              // const SizedBox(height: 20),
+              // ElevatedButton(
+              //   onPressed: _isAuthenticated
+              //       ? () {
+              //     // Navigator.push(
+              //     //   context,
+              //     //   MaterialPageRoute(builder: (context) => const GameApp()),
+              //     // );
+              //   }
+              //       : null, // Przycisk nieaktywny, jeśli niezalogowany
+              //   child: const Text('Start Game'),
+              //),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
