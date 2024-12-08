@@ -2,6 +2,7 @@ import 'package:graphs/graphs.dart';
 
 import '../components/components.dart';
 import 'Levels/level.dart';
+import '../widgets/game_app.dart';
 
 ///Board class
 ///

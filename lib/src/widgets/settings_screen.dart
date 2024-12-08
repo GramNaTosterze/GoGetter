@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,7 +12,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool musicEnabled = true;
   double volume = 50;
   double fontSize = 16;
-  String difficulty = 'Normal';
+  String language = 'Polish';
 
   @override
   Widget build(BuildContext context) {
@@ -122,8 +123,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     const Text('Language'),
                     DropdownButton<String>(
-                      dropdownColor: const Color(0xff204b5e), // Kolor tła rozwijanego menu
-                      value: difficulty,
+                      dropdownColor: const Color(0xff204b5e),
+                      value: language,
                       items: <String>['Polish', 'English'].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -135,7 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }).toList(),
                       onChanged: (String? newValue) {
                         setState(() {
-                          difficulty = newValue!;
+                          language = newValue!;
                         });
                       },
                     ),
