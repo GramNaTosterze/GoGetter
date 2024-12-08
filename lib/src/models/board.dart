@@ -11,15 +11,15 @@ class Board {
   Map<int, BlockType?> gameBoard = {for (var i = 0; i < 9; i++) i: null};
   Board({required this.nodes});
 
-  Board copy() {
-    Map<String, Set<String>> nodes = {};
-    for (var v in this.nodes.keys) {
-      nodes[v] = Set.from(this.nodes[v]!);
-    }
+  Board.from(Board board) : nodes = {} {
 
-    var copy = Board(nodes: nodes);
-    copy.gameBoard = Map.from(gameBoard);
-    return copy;
+    gameBoard = {for (var i = 0; i < 9; i++) i: board.gameBoard[i]};
+    //gameBoard = Map.from(gameBoard);
+
+
+    for (var v in board.nodes.keys) {
+      nodes[v] = Set.from(board.nodes[v]!);
+    }
   }
 
   /// Swaps block [block1] and [block2]

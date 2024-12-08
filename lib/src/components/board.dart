@@ -126,13 +126,6 @@ class BoardComponent extends RectangleComponent
     ));
 }
 
-  BoardComponent copy() {
-    BoardComponent copy = BoardComponent();
-    copy.blocks = List.from(blocks);
-    copy.board = board.copy();
-    return copy;
-  }
-
   Future addObjectSprites(Vector2 start, Vector2 blockSize) async {
     for (var i = 0; i < 3; i++) {
       add(SpriteComponent(

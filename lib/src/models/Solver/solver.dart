@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:go_getter/src/components/components.dart';
 
 import '../models.dart';
@@ -17,7 +18,7 @@ class Solver {
   });
 
   Future<Hint?> hint() async {
-    return (await solve()).$1;
+    return  (await solve()).$1;
   }
 
   Future<bool> isSolvable() async {
@@ -25,9 +26,9 @@ class Solver {
   }
 
   Future<(Hint?, bool)> solve() async {
-    return _solve(/*Blocks not placed on the board*/
+    return compute((msg) => _solve(/*Blocks not placed on the board*/
         pathBlocks.where((pb) => pb.block == null).map((pb) => pb.blockType).toList(),
-        board.copy());
+        Board.from(board)), null);
   }
 
   Future<(Hint?, bool)> _solve(List<BlockType> notPlaces, Board board) async {
@@ -41,18 +42,20 @@ class Solver {
         if (board.gameBoard[place] == null) { // empty blocks on the board
 
           List<BlockType> remaining = List.from(notPlaces);
+          var newBoard = Board.from(board);
+
           remaining.remove(block);
-          board.place(block, place);
+          newBoard.place(block, place);
           var numOfRotations = 0;
           for (var _ in Direction.values) {
-            var isSolved = await _solve(remaining, board.copy());
+            var isSolved = await _solve(remaining, newBoard);
             if (isSolved.$2) {
               return (Hint(blockType: block, place: place, numOfRotations: numOfRotations), true);
             }
-            board.rotate(block);
+            newBoard.rotate(block);
             numOfRotations++;
           }
-          board.remove(block);
+          //board.remove(block);
         }
       }
     }
