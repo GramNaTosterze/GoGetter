@@ -258,7 +258,7 @@ enum BlockType {
   const BlockType({
     required this.id,
     required this.nodes,
-  }) : img = 'block$id.png';
+  }) : img = 'blockv2_$id.png';
 
   final int id;
 

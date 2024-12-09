@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'settings_screen.dart';
 import 'levels_screen.dart';
+import 'level_selection.dart';
 import '../../play_games_service.dart';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:convert';
+
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -44,6 +48,15 @@ class _MainMenuState extends State<MainMenu> {
           _isAuthenticated = false;
           _playerId = null;
         });
+      }
+    }
+    if(_isAuthenticated){
+      Uint8List loadedData = await PlayGamesService.loadGame();
+      if (loadedData.isNotEmpty) {
+        final jsonString = utf8.decode(loadedData);
+        final gameData = jsonDecode(jsonString);
+        LevelSelectionState.completedLevels = List<int>.from(gameData['completedLevels'] ?? []);
+        LevelSelectionState.bestScores = Map<int,int>.from((gameData['bestScores'] ?? {}).map((k,v) => MapEntry(int.parse(k), v)));
       }
     }
   }

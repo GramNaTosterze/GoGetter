@@ -1,7 +1,7 @@
 name: go_getter
 description: "implementation of a \"GoGetter\" game from the Smart Games series"
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: '>=3.3.1 <4.0.0'
