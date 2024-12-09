@@ -71,9 +71,9 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     ];
     world.addAll(pathBlocks);
 
-    solver = Solver(
+    solver = Solver(pathBlocks: pathBlocks,
+
         board: boardComponent.board,
-        pathBlocks: pathBlocks,
         levelConditions: currentLevel
     );
     currentScore = 0;
@@ -120,7 +120,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     playState = PlayState.welcome;
   }
 
-  void handleLevelCompleted() {
+  void handleLevelCompleted() async {
     playState = PlayState.levelCompleted;
     stopTimer();
     if (LevelSelectionState.bestScores[currentLevel.idx] == null ||

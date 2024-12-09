@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_getter/src/components/components.dart';
+import 'package:go_getter/src/widgets/settings_screen.dart';
 import 'block.dart';
 
 /// Block that describes the Path.
@@ -75,7 +77,11 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
   @override
   void onTapUp(TapUpEvent event) {
+    if(Settings.musicEnabled) {
+      FlameAudio.play('effects/rotate.mp3', volume: Settings.volume);
+    }
     super.onTapUp(event);
+
     sprite.angle += degrees2Radians * 90;
     priority = 9;
     game.currentScore += 100;

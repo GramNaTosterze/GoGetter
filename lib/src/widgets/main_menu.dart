@@ -1,3 +1,4 @@
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'settings_screen.dart';
 import 'levels_screen.dart';
@@ -22,6 +23,15 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     super.initState();
+    FlameAudio.bgm.initialize();
+    FlameAudio.audioCache.loadAll([
+      'music/background.mp3',
+      'effects/start.mp3',
+      'effects/win.mp3',
+      'effects/rotate.mp3',
+      'effects/no_more_moves.mp3'
+    ]);
+
     _authenticatePlayer();
   }
 
@@ -88,35 +98,12 @@ class _MainMenuState extends State<MainMenu> {
                   'Witaj, Player ID: $_playerId',
                   style: const TextStyle(color: Colors.white),
                 ),
-              // else
-              //   ElevatedButton(
-              //     onPressed: () async {
-              //       bool signedIn = await PlayGamesService.signIn();
-              //       if (signedIn) {
-              //         String? playerId = await PlayGamesService.getPlayerId();
-              //         setState(() {
-              //           _isAuthenticated = true;
-              //           _playerId = playerId;
-              //         });
-              //       }
-              //     },
-              //     child: const Text('Zaloguj się do Play Games'),
-              //   ),
-              // const SizedBox(height: 20),
-              // ElevatedButton(
-              //   onPressed: _isAuthenticated
-              //       ? () {
-              //     // Navigator.push(
-              //     //   context,
-              //     //   MaterialPageRoute(builder: (context) => const GameApp()),
-              //     // );
-              //   }
-              //       : null, // Przycisk nieaktywny, jeśli niezalogowany
-              //   child: const Text('Start Game'),
-              //),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
+                  if(Settings.musicEnabled) {
+                    FlameAudio.play('effects/start.mp3', volume: Settings.volume*0.7);
+                  }
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const LevelsScreen()),

@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_getter/src/widgets/settings_screen.dart';
 
 import '../models/models.dart';
 
@@ -103,6 +105,7 @@ class BoardComponent extends RectangleComponent
       onPressed: () async {
         var hint = await game.solver.hint();
         if (hint == null) {
+          FlameAudio.play('effects/no_more_moves.mp3', volume: Settings.volume);
           game.overlays.add("Hint_NoMoreMoves");
           Future.delayed(const Duration(seconds: 5),
                   () => game.overlays.remove("Hint_NoMoreMoves"));
@@ -116,9 +119,11 @@ class BoardComponent extends RectangleComponent
         );
         add(ghostBlock);
         ghostBlock.opacity = 0.5;
-        ghostBlock.angle += degrees2Radians * 90 * hint.numOfRotations;
+        var currentBlockAngle = game.pathBlocks.where((b) => b.blockType.id == hint.blockType.id).first.sprite.angle;
+        ghostBlock.angle = degrees2Radians * 90 * hint.numOfRotations;
+        ghostBlock.angle += currentBlockAngle;
         Future.delayed(const Duration(seconds: 5),
-                () => remove(ghostBlock));
+               () => remove(ghostBlock));
       },
       size: Vector2(100, 100),
       button: buttonSprite,

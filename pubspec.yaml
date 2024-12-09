@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   flame: ^1.16.0
+  flame_audio: ^2.10.6
   flutter:
     sdk: flutter
   flutter_animate: ^4.5.0
@@ -27,6 +28,8 @@ flutter:
     - assets/images/board/
     - assets/images/UI/
     - assets/images/levels/
+    - assets/audio/music/
+    - assets/audio/effects/
     - assets/levels/starter/
     - assets/levels/junior/
     - assets/levels/master/

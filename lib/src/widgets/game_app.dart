@@ -2,6 +2,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_getter/src/widgets/level_selection.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:go_getter/src/widgets/settings_screen.dart';
 
 import '../go_getter.dart';
 import '../models/Levels/level.dart';
@@ -28,11 +30,17 @@ class _GameAppState extends State<GameApp> {
   @override
   void initState() {
     super.initState();
+    if(Settings.musicEnabled) {
+      FlameAudio.bgm.play('music/background.mp3', volume: Settings.volume*0.7);
+    }
     game = GoGetter();
 
     game.onLevelCompleted = () {
       widget.onLevelCompleted();
       game.playState = PlayState.levelCompleted;
+      if (Settings.musicEnabled) {
+        FlameAudio.play('effects/win.mp3', volume: Settings.volume);
+      }
       game.overlays.add(PlayState.levelCompleted.name);
     };
 
@@ -45,6 +53,8 @@ class _GameAppState extends State<GameApp> {
 
   @override
   void dispose() {
+    FlameAudio.bgm.stop();
+    // Gdy widget GameApp jest usuwany, wyczyść referencje w GoGetter
     game.disposeGame();
     super.dispose();
   }
@@ -195,7 +205,7 @@ class _GameAppState extends State<GameApp> {
                     ),
                     Expanded(
                       child: Transform.translate(
-                        offset: const Offset(0, 100),
+                        offset: const Offset(0, 0),
                         child: GameWidget(
                           game: game,
                           overlayBuilderMap: {

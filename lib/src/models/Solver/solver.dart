@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:go_getter/src/components/components.dart';
 
 import '../models.dart';
@@ -26,9 +25,9 @@ class Solver {
   }
 
   Future<(Hint?, bool)> solve() async {
-    return compute((msg) => _solve(/*Blocks not placed on the board*/
+    return _solve(/*Blocks not placed on the board*/
         pathBlocks.where((pb) => pb.block == null).map((pb) => pb.blockType).toList(),
-        Board.from(board)), null);
+        Board.from(board));
   }
 
   Future<(Hint?, bool)> _solve(List<BlockType> notPlaces, Board board) async {

@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool musicEnabled = true;
-  double volume = 50;
-  double fontSize = 16;
-  String language = 'Polish';
-
+class SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: DefaultTextStyle(
           style: TextStyle(
             color: Colors.white,
-            fontSize: fontSize,
+            fontSize: Settings.fontSize,
             fontFamily: 'PressStart2P',
           ),
           child: Padding(
@@ -49,10 +43,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Switch(
                       activeColor: Colors.white,
                       inactiveThumbColor: Colors.grey,
-                      value: musicEnabled,
+                      value: Settings.musicEnabled,
                       onChanged: (bool value) {
                         setState(() {
-                          musicEnabled = value;
+                          Settings.musicEnabled = value;
                         });
                       },
                     ),
@@ -73,15 +67,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         valueIndicatorTextStyle: const TextStyle(color: Colors.white),
                       ),
                       child: Slider(
-                        value: volume,
+                        value: Settings.volumeProc,
                         min: 0,
                         max: 100,
                         divisions: 100,
-                        label: volume.round().toString(),
-                        onChanged: musicEnabled
+                        label: Settings.volumeProc.round().toString(),
+                        onChanged: Settings.musicEnabled
                             ? (double value) {
                           setState(() {
-                            volume = value;
+                            Settings.volumeProc = value;
                           });
                         }
                             : null,
@@ -103,14 +97,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         valueIndicatorTextStyle: const TextStyle(color: Colors.white),
                       ),
                       child: Slider(
-                        value: fontSize,
+                        value: Settings.fontSize,
                         min: 10,
                         max: 30,
                         divisions: 20,
-                        label: fontSize.round().toString(),
+                        label: Settings.fontSize.round().toString(),
                         onChanged: (double value) {
                           setState(() {
-                            fontSize = value;
+                            Settings.fontSize = value;
                           });
                         },
                       ),
@@ -124,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const Text('Language'),
                     DropdownButton<String>(
                       dropdownColor: const Color(0xff204b5e),
-                      value: language,
+                      value: Settings.language,
                       items: <String>['Polish', 'English'].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -136,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }).toList(),
                       onChanged: (String? newValue) {
                         setState(() {
-                          language = newValue!;
+                          Settings.language = newValue!;
                         });
                       },
                     ),
@@ -155,5 +149,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+}
+
+
+class Settings {
+  static bool musicEnabled = true;
+  static double volume = 0.5;
+  static double fontSize = 16;
+  static String language = 'Polish';
+
+  static double get volumeProc {
+    return volume*100;
+  }
+  static set volumeProc(double value) {
+    volume = value/100;
   }
 }

@@ -2,7 +2,6 @@ import 'package:graphs/graphs.dart';
 
 import '../components/components.dart';
 import 'Levels/level.dart';
-import '../widgets/game_app.dart';
 
 ///Board class
 ///
@@ -152,12 +151,10 @@ class Board {
     }
 
     for (var condition in levelConditions.conditions) {
-
       if ( isConnected(condition.start, condition.end) ^ condition.shouldConnect ) {
         return LevelCondition.lose;
       }
     }
-
     return LevelCondition.win;
   }
 
