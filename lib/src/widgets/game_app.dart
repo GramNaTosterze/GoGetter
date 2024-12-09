@@ -36,7 +36,6 @@ class _GameAppState extends State<GameApp> {
       game.overlays.add(PlayState.levelCompleted.name);
     };
 
-    // Zaktualizowanie stanu przy zmianie poziomu
     game.onLevelChanged = () {
       setState(() {}); // Wywołanie setState, aby odświeżyć UI
     };
@@ -46,7 +45,6 @@ class _GameAppState extends State<GameApp> {
 
   @override
   void dispose() {
-    // Gdy widget GameApp jest usuwany, wyczyść referencje w GoGetter
     game.disposeGame();
     super.dispose();
   }
@@ -73,7 +71,7 @@ class _GameAppState extends State<GameApp> {
       ) {
     if (game.playState == PlayState.levelCompleted) {
       if (event.logicalKey == LogicalKeyboardKey.space || event.logicalKey == LogicalKeyboardKey.enter) {
-        _proceedToNextLevel(); // Przejście do kolejnego poziomu po naciśnięciu klawisza
+        _proceedToNextLevel();
         return KeyEventResult.handled;
       }
     }
@@ -154,7 +152,6 @@ class _GameAppState extends State<GameApp> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Kolumna z wynikami
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -165,7 +162,7 @@ class _GameAppState extends State<GameApp> {
                                         color: Colors.white,
                                       ),
                                     ),
-                                    const SizedBox(height: 8), // Odstęp między wynikami
+                                    const SizedBox(height: 8),
                                     Text(
                                       "Current Score: ${game.currentScore}",
                                       style: const TextStyle(
@@ -175,7 +172,6 @@ class _GameAppState extends State<GameApp> {
                                     ),
                                   ],
                                 ),
-                                // Ikona pauzy
                                 IconButton(
                                   icon: const Icon(Icons.pause),
                                   onPressed: _showPauseMenu,

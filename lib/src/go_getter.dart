@@ -13,6 +13,10 @@ import 'components/components.dart';
 import 'config.dart';
 import 'models/models.dart';
 import 'dart:async' as dart_async;
+import 'dart:convert';
+import 'dart:typed_data';
+import '../play_games_service.dart';
+
 
 
 enum PlayState { welcome, playing, levelCompleted }
@@ -116,12 +120,27 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     playState = PlayState.welcome;
   }
 
-  void handleLevelCompleted() {
+  void handleLevelCompleted() async {
     playState = PlayState.levelCompleted;
     stopTimer();
+
+    // Aktualizacja najlepszych wyników
     if (LevelSelectionState.bestScores[currentLevel.idx] == null ||
         currentScore < LevelSelectionState.bestScores[currentLevel.idx]!) {
       LevelSelectionState.bestScores[currentLevel.idx] = currentScore;
+    }
+
+    // Przygotowanie danych do zapisania
+    try {
+      final data = {
+        "completedLevels": LevelSelectionState.completedLevels,
+        "bestScores": LevelSelectionState.bestScores.map((key, value) => MapEntry(key.toString(), value)),
+      };
+      final jsonString = jsonEncode(data); // Konwertowanie na JSON
+      final bytes = Uint8List.fromList(utf8.encode(jsonString)); // Przygotowanie danych binarnych
+      await PlayGamesService.saveGame(bytes); // Zapis do Google Play
+    } catch (e) {
+      print("Error during saving game state: $e");
     }
 
     if (onLevelCompleted != null) {
@@ -129,6 +148,8 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     }
     overlays.add(PlayState.levelCompleted.name);
   }
+
+
 
   void _proceedToNextLevel() async {
     if (playState == PlayState.levelCompleted) {
