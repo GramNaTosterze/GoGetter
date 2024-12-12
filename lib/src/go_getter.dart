@@ -8,14 +8,12 @@ import 'package:flame/input.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_getter/src/models/GameServices/game_service.dart';
 import 'package:go_getter/src/widgets/level_selection.dart';
 import 'components/components.dart';
 import 'config.dart';
 import 'models/models.dart';
 import 'dart:async' as dart_async;
-import 'dart:convert';
-import 'dart:typed_data';
-import '../play_games_service.dart';
 
 
 
@@ -128,18 +126,9 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       LevelSelectionState.bestScores[currentLevel.idx] = currentScore;
     }
 
-    // Przygotowanie danych do zapisania
-    try {
-      final data = {
-        "completedLevels": LevelSelectionState.completedLevels,
-        "bestScores": LevelSelectionState.bestScores.map((key, value) => MapEntry(key.toString(), value)),
-      };
-      final jsonString = jsonEncode(data); // Konwertowanie na JSON
-      final bytes = Uint8List.fromList(utf8.encode(jsonString)); // Przygotowanie danych binarnych
-      await PlayGamesService.saveGame(bytes); // Zapis do Google Play
-    } catch (e) {
-      print("Error during saving game state: $e");
-    }
+
+    await GameService().saveGame(LevelSelectionState.completedLevels, LevelSelectionState.bestScores); // Zapis do Google Play
+
 
     if (onLevelCompleted != null) {
       onLevelCompleted!();

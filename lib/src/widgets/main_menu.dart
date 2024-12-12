@@ -1,12 +1,10 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_getter/src/models/GameServices/game_service.dart';
 import 'settings_screen.dart';
 import 'levels_screen.dart';
 import 'level_selection.dart';
-import '../../play_games_service.dart';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:convert';
 
 
 class MainMenu extends StatefulWidget {
@@ -17,8 +15,7 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  bool _isAuthenticated = false;
-  String? _playerId;
+  final GameService _gameService = GameService();
 
   @override
   void initState() {
@@ -36,38 +33,14 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   Future<void> _authenticatePlayer() async {
-    // Sprawdź, czy użytkownik jest zalogowany
-    bool isAuthenticated = await PlayGamesService.isAuthenticated();
-    if (isAuthenticated) {
-      // Pobierz Player ID
-      String? playerId = await PlayGamesService.getPlayerId();
-      setState(() {
-        _isAuthenticated = true;
-        _playerId = playerId;
-      });
-    } else {
-      bool signedIn = await PlayGamesService.signIn();
-      if (signedIn) {
-        String? playerId = await PlayGamesService.getPlayerId();
-        setState(() {
-          _isAuthenticated = true;
-          _playerId = playerId;
-        });
-      } else {
-        setState(() {
-          _isAuthenticated = false;
-          _playerId = null;
-        });
-      }
+    if (! await _gameService.signIn()) {
+      return;
     }
-    if(_isAuthenticated){
-      Uint8List loadedData = await PlayGamesService.loadGame();
-      if (loadedData.isNotEmpty) {
-        final jsonString = utf8.decode(loadedData);
-        final gameData = jsonDecode(jsonString);
-        LevelSelectionState.completedLevels = List<int>.from(gameData['completedLevels'] ?? []);
-        LevelSelectionState.bestScores = Map<int,int>.from((gameData['bestScores'] ?? {}).map((k,v) => MapEntry(int.parse(k), v)));
-      }
+
+    var levelData = await _gameService.loadGame();
+    if (levelData != null) {
+      LevelSelectionState.completedLevels = levelData.$1;
+      LevelSelectionState.bestScores = levelData.$2;
     }
   }
 
@@ -93,9 +66,9 @@ class _MainMenuState extends State<MainMenu> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (_isAuthenticated && _playerId != null)
+              if (_gameService.isAuthenticated && _gameService.playerId != null)
                 Text(
-                  'Witaj, Player ID: $_playerId',
+                  'Witaj, Player ID: ${_gameService.playerId}',
                   style: const TextStyle(color: Colors.white),
                 ),
               const SizedBox(height: 40),

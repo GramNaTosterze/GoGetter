@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:go_getter/src/components/components.dart';
 import 'package:go_getter/src/models/models.dart';
 import 'package:go_getter/src/widgets/game_app.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum DifficultyLevel {
   starter,
@@ -62,14 +61,6 @@ class LevelSelectionState extends State<LevelSelection> {
   LevelSelectionState(this.difficulty) {
     //difficulty = widget.difficulty;
     board = BoardComponent();
-    SharedPreferences.getInstance().then((prefs) {
-      var list = prefs.getStringList("completedLevels");
-      if (list != null) {
-        setState(() {
-          completedLevels = list.map((el) => int.parse(el)).toList();
-        });
-      }
-    });
   }
 
   @override
@@ -179,9 +170,5 @@ class LevelSelectionState extends State<LevelSelection> {
   static void markLevelAsCompleted(int levelId) {
     if (completedLevels.contains(levelId)) return;
     completedLevels.add(levelId);
-
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setStringList('completedLevels', completedLevels.map((el) => el.toString()).toList());
-    });
   }
 }
