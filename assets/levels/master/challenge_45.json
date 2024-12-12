@@ -56,18 +56,6 @@
       "shouldConnect": false
     },
     {
-      "start": "u2",
-      "end": "d1",
-      "shouldConnect": false
-    },
-
-
-    {
-      "start": "u2",
-      "end": "d1",
-      "shouldConnect": false
-    },
-    {
       "start": "l1",
       "end": "l2",
       "shouldConnect": false

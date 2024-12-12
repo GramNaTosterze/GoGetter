@@ -41,7 +41,7 @@
       "shouldConnect": false
     },
     {
-      "start": "u1",
+      "start": "d1",
       "end": "u1",
       "shouldConnect": false
     },
@@ -51,7 +51,7 @@
       "shouldConnect": false
     },
     {
-      "start": "u1",
+      "start": "d1",
       "end": "d3",
       "shouldConnect": false
     },

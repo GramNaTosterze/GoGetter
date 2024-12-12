@@ -13,7 +13,7 @@
     {
       "start": "u2",
       "end": "l3",
-      "shouldConnect": false
+      "shouldConnect": true
     }
   ]
 }
