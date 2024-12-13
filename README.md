@@ -5,6 +5,9 @@
 Based on the original *Cat & Mouse, GoGetter* game by *Smart Games*
 GoGetter is a simple puzzle game where the objective is to arrange nine blocks in such a way as to create the paths required to complete a level.
 
+![screenshot](https://raw.githubusercontent.com/GramNaTosterze/GoGetter/refs/heads/master/.github/metadata/screenshots/main_menu.png)
+![screenshot](https://raw.githubusercontent.com/GramNaTosterze/GoGetter/refs/heads/master/.github/metadata/screenshots/board_hints.png)
+![screenshot](https://raw.githubusercontent.com/GramNaTosterze/GoGetter/refs/heads/master/.github/metadata/screenshots/pause_menu.png)
 
 ## :dart: Supported platforms ##
 - Android
