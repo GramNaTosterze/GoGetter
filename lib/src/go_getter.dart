@@ -132,6 +132,9 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       case 3:
         leaderboardId = 'CgkI4buRrPYaEAIQAw';
         break;
+      case 4:
+        leaderboardId = 'CgkI4buRrPYaEAIQBA';
+        break;
       default:
         return;
     }
@@ -145,7 +148,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     if (LevelSelectionState.bestScores[currentLevel.idx] == null ||
         currentScore < LevelSelectionState.bestScores[currentLevel.idx]!) {
       LevelSelectionState.bestScores[currentLevel.idx] = currentScore;
-      submitScoreToLeaderboard(currentLevel.idx, currentScore);
+      //submitScoreToLeaderboard(currentLevel.idx, currentScore);
 
     }
 
@@ -160,11 +163,14 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       case 3:
         leaderboardId = 'CgkI4buRrPYaEAIQAw';
         break;
+      case 4:
+        leaderboardId = 'CgkI4buRrPYaEAIQBA';
+        break;
       default:
         return;
     }
 
-    PlayGamesLeaderboard.showLeaderboard(leaderboardId);
+    //PlayGamesLeaderboard.showLeaderboard(leaderboardId);
 
 
     await GameService().saveGame(LevelSelectionState.completedLevels, LevelSelectionState.bestScores); // Zapis do Google Play
