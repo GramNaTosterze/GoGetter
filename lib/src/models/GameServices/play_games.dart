@@ -8,6 +8,14 @@ class PlayGamesService implements GameService{
   final MethodChannel _channel = const MethodChannel('play_games_service');
   bool _isAuthentiated = false;
   String? _playerId;
+  final Map<int, String> _leaderboard = {
+    1: 'CgkI4buRrPYaEAIQAQ',
+    2: 'CgkI4buRrPYaEAIQAg',
+    3: 'CgkI4buRrPYaEAIQAw',
+    4: 'CgkI4buRrPYaEAIQBA',
+    5: 'CgkI4buRrPYaEAIQBQ',
+  };
+
 
   @override
   bool get isAuthenticated {
@@ -83,5 +91,24 @@ class PlayGamesService implements GameService{
     final bestScores = Map<int,int>.from((gameData['bestScores'] ?? {}).map((k,v) => MapEntry(int.parse(k), v)));
 
     return (completedLevels, bestScores);
+  }
+
+  @override
+  Future showLeaderboard(int level) async {
+    if (!_leaderboard.containsKey(level)) return;
+
+    await _channel.invokeMethod('showLeaderboard', {
+      'leaderboardId': _leaderboard[level],
+    });
+  }
+
+  @override
+  Future submitScore(int level, int score) async {
+    if (!_leaderboard.containsKey(level)) return;
+
+    await _channel.invokeMethod('submitScore', {
+      'leaderboardId': _leaderboard[level],
+      'score': score,
+    });
   }
 }

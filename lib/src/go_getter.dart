@@ -13,7 +13,6 @@ import 'package:go_getter/src/widgets/level_selection.dart';
 import 'components/components.dart';
 import 'config.dart';
 import 'models/models.dart';
-import 'models/GameServices/PlayGamesLeaderboard.dart';
 
 import 'dart:async' as dart_async;
 
@@ -120,68 +119,19 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     playState = PlayState.welcome;
   }
 
-  void submitScoreToLeaderboard(int levelIndex, int score) async {
-    String leaderboardId;
-    switch (levelIndex) {
-      case 1:
-        leaderboardId = 'CgkI4buRrPYaEAIQAQ'; // getString(R.string.leaderboard_level_1)
-        break;
-      case 2:
-        leaderboardId = 'CgkI4buRrPYaEAIQAg';
-        break;
-      case 3:
-        leaderboardId = 'CgkI4buRrPYaEAIQAw';
-        break;
-      case 4:
-        leaderboardId = 'CgkI4buRrPYaEAIQBA';
-        break;
-      case 5:
-        leaderboardId = 'CgkI4buRrPYaEAIQBQ';
-        break;
-      default:
-        return;
-    }
-
-    await PlayGamesLeaderboard.submitScore(leaderboardId, score);
-  }
-
   void handleLevelCompleted() async {
     playState = PlayState.levelCompleted;
     stopTimer();
-    submitScoreToLeaderboard(currentLevel.idx, currentScore);
     if (LevelSelectionState.bestScores[currentLevel.idx] == null ||
         currentScore < LevelSelectionState.bestScores[currentLevel.idx]!) {
       LevelSelectionState.bestScores[currentLevel.idx] = currentScore;
 
     }
 
-    submitScoreToLeaderboard(currentLevel.idx, LevelSelectionState.bestScores[currentLevel.idx]!);
-    String leaderboardId;
-    switch (currentLevel.idx) {
-      case 1:
-        leaderboardId = 'CgkI4buRrPYaEAIQAQ'; // getString(R.string.leaderboard_level_1)
-        break;
-      case 2:
-        leaderboardId = 'CgkI4buRrPYaEAIQAg';
-        break;
-      case 3:
-        leaderboardId = 'CgkI4buRrPYaEAIQAw';
-        break;
-      case 4:
-        leaderboardId = 'CgkI4buRrPYaEAIQBA';
-        break;
-      case 5:
-        leaderboardId = 'CgkI4buRrPYaEAIQBQ';
-        break;
-      default:
-        return;
-    }
-
-    PlayGamesLeaderboard.showLeaderboard(leaderboardId);
-
-
-    await GameService().saveGame(LevelSelectionState.completedLevels, LevelSelectionState.bestScores); // Zapis do Google Play
-
+    await LevelSelectionState.markLevelAsCompleted(currentLevel.idx);
+    final GameService gameService = GameService();
+    await gameService.submitScore(currentLevel.idx, LevelSelectionState.bestScores[currentLevel.idx]!);
+    await gameService.showLeaderboard(currentLevel.idx);
 
     if (onLevelCompleted != null) {
       onLevelCompleted!();

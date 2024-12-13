@@ -99,37 +99,31 @@ class BoardComponent extends RectangleComponent
     ];
 
     addAll(blocks);
-
-    Sprite buttonSprite = Sprite(await game.images.load("thinking.jpg"));
-    add(SpriteButtonComponent(
-      onPressed: () async {
-        var hint = await game.solver.hint();
-        if (hint == null) {
-          FlameAudio.play('effects/no_more_moves.mp3', volume: Settings.volume);
-          game.overlays.add("Hint_NoMoreMoves");
-          Future.delayed(const Duration(seconds: 5),
-                  () => game.overlays.remove("Hint_NoMoreMoves"));
-          return;
-        }
-        var ghostBlock = SpriteComponent(
-            sprite: Sprite(await game.images.load(hint.blockType.img)),
-            position: blocks[hint.place].position,
-        size: blocks[hint.place].size,
-        anchor: Anchor.center,
-        );
-        add(ghostBlock);
-        ghostBlock.opacity = 0.5;
-        var currentBlockAngle = game.pathBlocks.where((b) => b.blockType.id == hint.blockType.id).first.sprite.angle;
-        ghostBlock.angle = degrees2Radians * 90 * hint.numOfRotations;
-        ghostBlock.angle += currentBlockAngle;
-        Future.delayed(const Duration(seconds: 5),
-               () => remove(ghostBlock));
-      },
-      size: Vector2(100, 100),
-      button: buttonSprite,
-      buttonDown: buttonSprite
-    ));
 }
+
+  Future requestHint() async {
+    var hint = await game.solver.hint();
+    if (hint == null) {
+      FlameAudio.play('effects/no_more_moves.mp3', volume: Settings.volume);
+      game.overlays.add("Hint_NoMoreMoves");
+      Future.delayed(const Duration(seconds: 5),
+              () => game.overlays.remove("Hint_NoMoreMoves"));
+      return;
+    }
+    var ghostBlock = SpriteComponent(
+      sprite: Sprite(await game.images.load(hint.blockType.img)),
+      position: blocks[hint.place].position,
+      size: blocks[hint.place].size,
+      anchor: Anchor.center,
+    );
+    add(ghostBlock);
+    ghostBlock.opacity = 0.5;
+    var currentBlockAngle = game.pathBlocks.where((b) => b.blockType.id == hint.blockType.id).first.sprite.angle;
+    ghostBlock.angle = degrees2Radians * 90 * hint.numOfRotations;
+    ghostBlock.angle += currentBlockAngle;
+    Future.delayed(const Duration(seconds: 5),
+            () => remove(ghostBlock));
+  }
 
   Future addObjectSprites(Vector2 start, Vector2 blockSize) async {
     for (var i = 0; i < 3; i++) {

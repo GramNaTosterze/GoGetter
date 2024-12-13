@@ -7,7 +7,6 @@ import 'package:go_getter/src/widgets/settings_screen.dart';
 
 import '../go_getter.dart';
 import '../models/Levels/level.dart';
-import '../models/GameServices/PlayGamesLeaderboard.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
 
@@ -167,23 +166,24 @@ class _GameAppState extends State<GameApp> {
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Best Score: $bestScore",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                      ),
+                                  children: Settings.showScore ?
+                                  [
+                                  Text(
+                                    "Best Score: $bestScore",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "Current Score: ${game.currentScore}",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                      ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Current Score: ${game.currentScore}",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
                                     ),
-                                  ],
+                                  ),
+                                  ] : [],
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.pause),
@@ -191,15 +191,6 @@ class _GameAppState extends State<GameApp> {
                                   color: Colors.white,
                                 ),
                               ],
-                            ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              "Warunki ukończenia poziomu:",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
                             ),
                             displayCondition(),
                           ],
@@ -220,10 +211,25 @@ class _GameAppState extends State<GameApp> {
                             "Hint_NoMoreMoves": (context, game) =>
                             const OverlayScreen(
                               title: "No valid Moves",
-                              subtitle: "Try different approach",
+                              subtitle: "Try something different",
                             ),
+                            "Hint_btn": (context, game) =>
+                                ElevatedButton(
+                                    onPressed: ()=> (game as GoGetter).boardComponent.requestHint(),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.lightbulb,
+                                          color: Colors.white,
+                                        ),
+                                        Text(' '),
+                                        Text('Hint'),
+                                      ],
+                                    ),
+                                ),
                           },
-                          initialActiveOverlays: [],
+                          initialActiveOverlays: const [],
                         ),
                       ),
                     ),

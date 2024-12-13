@@ -59,4 +59,10 @@ class LocalService implements GameService {
     return true;
   }
 
+  @override
+  Future showLeaderboard(int level) async {} // no Leaderboard in Local play
+
+  @override
+  Future submitScore(int level, int score) async {} // no Leaderboard in Local play
+
 }

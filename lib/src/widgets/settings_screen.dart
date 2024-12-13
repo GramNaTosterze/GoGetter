@@ -39,7 +39,43 @@ class SettingsScreenState extends State<SettingsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Music'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.extension,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Score'),
+                      ],
+                    ),
+                    Switch(
+                      activeColor: Colors.white,
+                      inactiveThumbColor: Colors.grey,
+                      value: Settings.showScore,
+                      onChanged: (bool value) {
+                        setState(() {
+                          Settings.showScore = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.music_note,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Music'),
+                      ],
+                    ),
                     Switch(
                       activeColor: Colors.white,
                       inactiveThumbColor: Colors.grey,
@@ -53,11 +89,20 @@ class SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                // Suwak głośności
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Volume'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.queue_music_outlined,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Volume'),
+                      ],
+                    ),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: Colors.white,
@@ -87,7 +132,17 @@ class SettingsScreenState extends State<SettingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Font Size'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.font_download,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Font Size'),
+                      ],
+                    ),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: Colors.white,
@@ -115,7 +170,17 @@ class SettingsScreenState extends State<SettingsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Language'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.language,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Language'),
+                      ],
+                    ),
                     DropdownButton<String>(
                       dropdownColor: const Color(0xff204b5e),
                       value: Settings.language,
@@ -155,6 +220,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
 class Settings {
   static bool musicEnabled = true;
+  static bool showScore = true;
   static double volume = 0.5;
   static double fontSize = 16;
   static String language = 'Polish';

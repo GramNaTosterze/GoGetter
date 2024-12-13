@@ -21,17 +21,47 @@ class PauseMenu extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: onResume,
-            child: const Text('Resume'),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                ),
+                Text(' '),
+                Text('Resume'),
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: onRestart,
-            child: const Text('Restart'),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.replay,
+                  color: Colors.white,
+                ),
+                Text(' '),
+                Text('Restart'),
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: onExit,
-            child: const Text('Exit'),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white,
+                ),
+                Text(' '),
+                Text('Exit'),
+              ],
+            ),
           ),
         ],
       ),

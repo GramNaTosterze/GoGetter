@@ -5,6 +5,7 @@ import 'package:flame/cache.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_getter/src/components/components.dart';
+import 'package:go_getter/src/models/GameServices/game_service.dart';
 import 'package:go_getter/src/models/models.dart';
 import 'package:go_getter/src/widgets/game_app.dart';
 
@@ -167,8 +168,11 @@ class LevelSelectionState extends State<LevelSelection> {
     }
   }
 
-  static void markLevelAsCompleted(int levelId) {
+  static Future markLevelAsCompleted(int levelId) async {
     if (completedLevels.contains(levelId)) return;
     completedLevels.add(levelId);
+    GameService gameService = GameService();
+    await gameService.saveGame(LevelSelectionState.completedLevels, LevelSelectionState.bestScores);
+
   }
 }

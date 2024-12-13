@@ -68,7 +68,7 @@ class _MainMenuState extends State<MainMenu> {
             children: [
               if (_gameService.isAuthenticated && _gameService.playerId != null)
                 Text(
-                  'Witaj, Player ID: ${_gameService.playerId}',
+                  'Hello, Player ID: ${_gameService.playerId}',
                   style: const TextStyle(color: Colors.white),
                 ),
               const SizedBox(height: 40),
@@ -82,7 +82,17 @@ class _MainMenuState extends State<MainMenu> {
                     MaterialPageRoute(builder: (context) => const LevelsScreen()),
                   );
                 },
-                child: const Text('Levels'),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.star,
+                      color: Colors.white,
+                    ),
+                    Text(' '),
+                    Text('Levels'),
+                  ],
+                ),
               ),
               const SizedBox(height: 40),
               ElevatedButton(
@@ -92,14 +102,34 @@ class _MainMenuState extends State<MainMenu> {
                     MaterialPageRoute(builder: (context) => const SettingsScreen()),
                   );
                 },
-                child: const Text('Settings'),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.settings,
+                      color: Colors.white,
+                    ),
+                    Text(' '),
+                    Text('Settings'),
+                  ],
+                ),
               ),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
                   exit(0);
                 },
-                child: const Text('Exit'),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.exit_to_app,
+                      color: Colors.white,
+                    ),
+                    Text(' '),
+                    Text('Exit'),
+                  ],
+                ),
               ),
             ],
           ),

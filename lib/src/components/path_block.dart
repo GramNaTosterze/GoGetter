@@ -113,13 +113,19 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
         LevelCondition.win) {
       game.handleLevelCompleted();
     }
+
+
+    if (boardComponent.board.gameBoard.values.where((el) => el != null).length >= 5) {
+      game.overlays.add('Hint_btn');
+    } else {
+      game.overlays.remove('Hint_btn');
+    }
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
     Vector2 tmp = position;
     tmp += event.localDelta;
-    //position += event.localDelta;
     if (tmp.x >= size.x/2 &&
          tmp.x + size.x/2 <= 1600 &&
          tmp.y >= size.y/2 &&

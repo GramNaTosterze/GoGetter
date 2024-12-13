@@ -22,4 +22,6 @@ abstract class GameService {
   Future<String?> getPlayerId();
   Future<bool> saveGame(List<int> completedLevels, Map<int, int> bestScores);
   Future<(List<int>, Map<int,int>)?> loadGame();
+  Future submitScore(int level, int score);
+  Future showLeaderboard(int level);
 }
