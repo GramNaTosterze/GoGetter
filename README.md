@@ -1,18 +1,18 @@
 # GoGetter
 [![Powered by Flame](https://img.shields.io/badge/Powered%20by-%F0%9F%94%A5-orange.svg)](https://flame-engine.org)
 
-## :dart: About ##
+## :sparkles: About ##
 Based on the original *Cat & Mouse, GoGetter* game by *Smart Games*
 GoGetter is a simple puzzle game where the objective is to arrange nine blocks in such a way as to create the paths required to complete a level.
 
 
-## Supported platforms ##
+## :dart: Supported platforms ##
 - Android
 - Web
 - Linux
 
 
-## Build steps ##
+## :rocket: Build steps ##
 
 ```bash
 $ # dependencies - only for linux
