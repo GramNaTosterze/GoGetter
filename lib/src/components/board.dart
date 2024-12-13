@@ -78,7 +78,7 @@ class BoardComponent extends RectangleComponent
     Vector2 start = size / 2 - blockSize + Vector2(0, blockSize.y);
 
     add(SpriteComponent(
-        sprite: Sprite(await game.images.load('plansza3.png')),
+        sprite: Sprite(await game.images.load('board.png')),
         position: size / 2 + Vector2(0, blockSize.y),
         size: size * 1.07,
         anchor: Anchor.center));
