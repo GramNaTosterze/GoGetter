@@ -151,7 +151,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     if (LevelSelectionState.bestScores[currentLevel.idx] == null ||
         currentScore < LevelSelectionState.bestScores[currentLevel.idx]!) {
       LevelSelectionState.bestScores[currentLevel.idx] = currentScore;
-      //submitScoreToLeaderboard(currentLevel.idx, currentScore);
+      submitScoreToLeaderboard(currentLevel.idx, currentScore);
 
     }
 
@@ -176,7 +176,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
         return;
     }
 
-    //PlayGamesLeaderboard.showLeaderboard(leaderboardId);
+    PlayGamesLeaderboard.showLeaderboard(leaderboardId);
 
 
     await GameService().saveGame(LevelSelectionState.completedLevels, LevelSelectionState.bestScores); // Zapis do Google Play
