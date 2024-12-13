@@ -135,6 +135,9 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       case 4:
         leaderboardId = 'CgkI4buRrPYaEAIQBA';
         break;
+      case 5:
+        leaderboardId = 'CgkI4buRrPYaEAIQBQ';
+        break;
       default:
         return;
     }
@@ -165,6 +168,9 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
         break;
       case 4:
         leaderboardId = 'CgkI4buRrPYaEAIQBA';
+        break;
+      case 5:
+        leaderboardId = 'CgkI4buRrPYaEAIQBQ';
         break;
       default:
         return;
