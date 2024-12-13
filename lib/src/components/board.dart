@@ -75,11 +75,11 @@ class BoardComponent extends RectangleComponent
     size = Vector2(game.width, game.height);
 
     Vector2 blockSize = size / 6 + Vector2(10, 10);
-    Vector2 start = size / 2 - blockSize;
+    Vector2 start = size / 2 - blockSize + Vector2(0, blockSize.y);
 
     add(SpriteComponent(
         sprite: Sprite(await game.images.load('plansza3.png')),
-        position: size / 2,
+        position: size / 2 + Vector2(0, blockSize.y),
         size: size * 1.07,
         anchor: Anchor.center));
 
@@ -106,7 +106,7 @@ class BoardComponent extends RectangleComponent
     if (hint == null) {
       FlameAudio.play('effects/no_more_moves.mp3', volume: Settings.volume);
       game.overlays.add("Hint_NoMoreMoves");
-      Future.delayed(const Duration(seconds: 5),
+      Future.delayed(const Duration(seconds: 3),
               () => game.overlays.remove("Hint_NoMoreMoves"));
       return;
     }

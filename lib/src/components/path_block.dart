@@ -127,9 +127,9 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     Vector2 tmp = position;
     tmp += event.localDelta;
     if (tmp.x >= size.x/2 &&
-         tmp.x + size.x/2 <= 1600 &&
+         tmp.x + size.x/2 <= game.width &&
          tmp.y >= size.y/2 &&
-         tmp.y + size.y/2 <= 1900
+         tmp.y + size.y/2 <= game.size.y
     ) {
       position = tmp;
     }

@@ -25,7 +25,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       : super(
     camera: CameraComponent.withFixedResolution(
       width: gameWidth,
-      height: gameHeight * 1.2,
+      height: gameHeight * 1.4,
     ),
   );
 
@@ -51,7 +51,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
   double get width => size.x;
 
-  double get height => size.y /1.2;
+  double get height => size.y /1.4;
 
   void startGame(Level currentLevel) {
     this.currentLevel = currentLevel;
@@ -64,7 +64,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       for (var blockType in BlockType.values)
         PathComponent(
           blockType,
-          position: Vector2(150.0 * blockType.index + 200, 1750.0),
+          position: Vector2(150.0 * blockType.index + 200, 1750.0) + Vector2(0, 250),
           boardComponent: boardComponent,
         )
     ];
@@ -130,7 +130,9 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
     await LevelSelectionState.markLevelAsCompleted(currentLevel.idx);
     final GameService gameService = GameService();
-    await gameService.submitScore(currentLevel.idx, LevelSelectionState.bestScores[currentLevel.idx]!);
+    //await gameService.submitScore(currentLevel.idx, LevelSelectionState.bestScores[currentLevel.idx]!);
+    await gameService.submitScore(currentLevel.idx, currentScore);
+
     await gameService.showLeaderboard(currentLevel.idx);
 
     if (onLevelCompleted != null) {
