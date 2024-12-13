@@ -181,6 +181,8 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     super.onLoad();
     camera.viewfinder.anchor = Anchor.topLeft;
     playState = PlayState.welcome;
+
+    await images.loadAllImages();
   }
 
   @override
