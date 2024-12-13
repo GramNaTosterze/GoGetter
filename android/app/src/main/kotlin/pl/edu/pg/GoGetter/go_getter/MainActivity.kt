@@ -1,5 +1,6 @@
 package pl.edu.pg.GoGetter.go_getter
 
+import android.content.Intent
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -7,15 +8,15 @@ import io.flutter.plugin.common.MethodChannel
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.PlayersClient
 import com.google.android.gms.games.SnapshotsClient
+import com.google.android.gms.games.LeaderboardsClient
 import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
-import com.google.android.gms.tasks.Task
 import android.util.Log
 import io.flutter.plugin.common.MethodCall
 
-
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "play_games_service"
+    private val RC_LEADERBOARD_UI = 9004
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -26,6 +27,8 @@ class MainActivity : FlutterActivity() {
                 "getPlayerId" -> getPlayerId(result)
                 "saveGame" -> saveGame(call, result)
                 "loadGame" -> loadGame(result)
+                "submitScore" -> submitScore(call, result)
+                "showLeaderboard" -> showLeaderboard(call, result)
                 else -> result.notImplemented()
             }
         }
@@ -33,6 +36,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Jeśli potrzebujesz innej inicjalizacji, dodaj ją tutaj
     }
 
     private fun checkAuthentication(result: MethodChannel.Result) {
@@ -113,6 +117,8 @@ class MainActivity : FlutterActivity() {
                 val snapshot = task.result?.data
                 if (snapshot != null) {
                     val data = snapshot.snapshotContents.readFully()
+                    // Nie zapominaj o zamknięciu snapshotu, jeśli to potrzebne:
+                    snapshotClient.discardAndClose(snapshot)
                     result.success(data)
                 } else {
                     result.error("ERROR", "No snapshot data returned", null)
@@ -121,5 +127,43 @@ class MainActivity : FlutterActivity() {
                 result.error("ERROR", "Failed to open snapshot", null)
             }
         }
+    }
+
+    private fun submitScore(call: MethodCall, result: MethodChannel.Result) {
+        val leaderboardId = call.argument<String>("leaderboardId")
+        val score = call.argument<Int>("score") ?: 0
+
+        if (leaderboardId == null) {
+            result.error("ERROR", "No leaderboardId provided", null)
+            return
+        }
+
+        val leaderboardsClient: LeaderboardsClient = PlayGames.getLeaderboardsClient(this)
+        leaderboardsClient.submitScore(leaderboardId, score.toLong())
+        result.success(null)
+    }
+
+    private fun showLeaderboard(call: MethodCall, result: MethodChannel.Result) {
+        val leaderboardId = call.argument<String>("leaderboardId")
+        if (leaderboardId == null) {
+            result.error("ERROR", "No leaderboardId provided", null)
+            return
+        }
+
+        val leaderboardsClient: LeaderboardsClient = PlayGames.getLeaderboardsClient(this)
+        leaderboardsClient.getLeaderboardIntent(leaderboardId)
+            .addOnSuccessListener { intent ->
+                startActivityForResult(intent, RC_LEADERBOARD_UI)
+                result.success(null)
+            }
+            .addOnFailureListener { e ->
+                result.error("ERROR", "Failed to show leaderboard: ${e.message}", null)
+            }
+    }
+
+    // Jeśli potrzebujesz obsługi onActivityResult:
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Jeśli chcesz obsłużyć powrót z interfejsu leaderboard, możesz to zrobić tutaj
     }
 }

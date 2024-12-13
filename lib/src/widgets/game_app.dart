@@ -7,6 +7,7 @@ import 'package:go_getter/src/widgets/settings_screen.dart';
 
 import '../go_getter.dart';
 import '../models/Levels/level.dart';
+import '../models/GameServices/PlayGamesLeaderboard.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
 
@@ -45,7 +46,7 @@ class _GameAppState extends State<GameApp> {
     };
 
     game.onLevelChanged = () {
-      setState(() {}); // Wywołanie setState, aby odświeżyć UI
+      setState(() {});
     };
 
     game.startGame(widget.selectedLevel);
@@ -114,6 +115,7 @@ class _GameAppState extends State<GameApp> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
+
   @override
   Widget build(BuildContext context) {
     int bestScore = LevelSelectionState.bestScores[game.currentLevel.idx] ?? 0;
@@ -121,6 +123,7 @@ class _GameAppState extends State<GameApp> {
       onTap: () {
         if (game.playState == PlayState.levelCompleted) {
           _proceedToNextLevel();
+
         }
       },
       child: Scaffold(
