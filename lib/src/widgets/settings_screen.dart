@@ -4,15 +4,10 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool musicEnabled = true;
-  double volume = 50;
-  double fontSize = 16;
-  String difficulty = 'Normal';
-
+class SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: DefaultTextStyle(
           style: TextStyle(
             color: Colors.white,
-            fontSize: fontSize,
+            fontSize: Settings.fontSize,
             fontFamily: 'PressStart2P',
           ),
           child: Padding(
@@ -44,25 +39,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Music'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.extension,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Score'),
+                      ],
+                    ),
                     Switch(
                       activeColor: Colors.white,
                       inactiveThumbColor: Colors.grey,
-                      value: musicEnabled,
+                      value: Settings.showScore,
                       onChanged: (bool value) {
                         setState(() {
-                          musicEnabled = value;
+                          Settings.showScore = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.music_note,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Music'),
+                      ],
+                    ),
+                    Switch(
+                      activeColor: Colors.white,
+                      inactiveThumbColor: Colors.grey,
+                      value: Settings.musicEnabled,
+                      onChanged: (bool value) {
+                        setState(() {
+                          Settings.musicEnabled = value;
                         });
                       },
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                // Suwak głośności
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Volume'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.queue_music_outlined,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Volume'),
+                      ],
+                    ),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: Colors.white,
@@ -72,15 +112,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         valueIndicatorTextStyle: const TextStyle(color: Colors.white),
                       ),
                       child: Slider(
-                        value: volume,
+                        value: Settings.volumeProc,
                         min: 0,
                         max: 100,
                         divisions: 100,
-                        label: volume.round().toString(),
-                        onChanged: musicEnabled
+                        label: Settings.volumeProc.round().toString(),
+                        onChanged: Settings.musicEnabled
                             ? (double value) {
                           setState(() {
-                            volume = value;
+                            Settings.volumeProc = value;
                           });
                         }
                             : null,
@@ -92,7 +132,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Font Size'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.font_download,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Font Size'),
+                      ],
+                    ),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: Colors.white,
@@ -102,14 +152,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         valueIndicatorTextStyle: const TextStyle(color: Colors.white),
                       ),
                       child: Slider(
-                        value: fontSize,
+                        value: Settings.fontSize,
                         min: 10,
                         max: 30,
                         divisions: 20,
-                        label: fontSize.round().toString(),
+                        label: Settings.fontSize.round().toString(),
                         onChanged: (double value) {
                           setState(() {
-                            fontSize = value;
+                            Settings.fontSize = value;
                           });
                         },
                       ),
@@ -120,10 +170,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Language'),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.language,
+                          color: Colors.white,
+                        ),
+                        Text(' '),
+                        Text('Language'),
+                      ],
+                    ),
                     DropdownButton<String>(
-                      dropdownColor: const Color(0xff204b5e), // Kolor tła rozwijanego menu
-                      value: difficulty,
+                      dropdownColor: const Color(0xff204b5e),
+                      value: Settings.language,
                       items: <String>['Polish', 'English'].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -135,7 +195,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }).toList(),
                       onChanged: (String? newValue) {
                         setState(() {
-                          difficulty = newValue!;
+                          Settings.language = newValue!;
                         });
                       },
                     ),
@@ -154,5 +214,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+}
+
+
+class Settings {
+  static bool musicEnabled = true;
+  static bool showScore = true;
+  static double volume = 0.5;
+  static double fontSize = 16;
+  static String language = 'Polish';
+
+  static double get volumeProc {
+    return volume*100;
+  }
+  static set volumeProc(double value) {
+    volume = value/100;
   }
 }

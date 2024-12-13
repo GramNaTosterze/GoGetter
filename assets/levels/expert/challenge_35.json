@@ -1,0 +1,64 @@
+{
+  "conditions": [
+    {
+      "start": "d2",
+      "end": "r2",
+      "shouldConnect": true
+    },
+    {
+      "start": "r2",
+      "end": "r3",
+      "shouldConnect": false
+    },
+    {
+      "start": "l1",
+      "end": "u3",
+      "shouldConnect": true
+    },
+    {
+      "start": "d1",
+      "end": "u3",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "u1",
+      "shouldConnect": false
+    },
+    {
+      "start": "d1",
+      "end": "u1",
+      "shouldConnect": false
+    },
+    {
+      "start": "l1",
+      "end": "r1",
+      "shouldConnect": false
+    },
+    {
+      "start": "d1",
+      "end": "r1",
+      "shouldConnect": false
+    },
+    {
+      "start": "l1",
+      "end": "u2",
+      "shouldConnect": false
+    },
+    {
+      "start": "d1",
+      "end": "u2",
+      "shouldConnect": false
+    },
+    {
+      "start": "l1",
+      "end": "l3",
+      "shouldConnect": false
+    },
+    {
+      "start": "d1",
+      "end": "l3",
+      "shouldConnect": false
+    }
+  ]
+}

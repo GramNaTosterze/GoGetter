@@ -1,0 +1,54 @@
+{
+  "conditions": [
+    {
+      "start": "d2",
+      "end": "r1",
+      "shouldConnect": true
+    },
+    {
+      "start": "r2",
+      "end": "l2",
+      "shouldConnect": true
+    },
+    {
+      "start": "r2",
+      "end": "u3",
+      "shouldConnect": true
+    },
+    {
+      "start": "r2",
+      "end": "u1",
+      "shouldConnect": true
+    },
+    {
+      "start": "u2",
+      "end": "l2",
+      "shouldConnect": true
+    },
+    {
+      "start": "u2",
+      "end": "u3",
+      "shouldConnect": true
+    },
+    {
+      "start": "u2",
+      "end": "u1",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "l2",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "u3",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "u1",
+      "shouldConnect": true
+    }
+  ]
+}

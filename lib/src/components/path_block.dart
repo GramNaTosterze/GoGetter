@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_getter/src/components/components.dart';
+import 'package:go_getter/src/widgets/settings_screen.dart';
 import 'block.dart';
 
 /// Block that describes the Path.
@@ -75,11 +77,16 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
   @override
   void onTapUp(TapUpEvent event) {
+    if(Settings.musicEnabled) {
+      FlameAudio.play('effects/rotate.mp3', volume: Settings.volume);
+    }
     super.onTapUp(event);
+
     sprite.angle += degrees2Radians * 90;
     priority = 9;
+    game.currentScore += 100;
     boardComponent.board.rotate(blockType);
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+    if (boardComponent.board.gameState(game.currentLevel) ==
         LevelCondition.win) {
       game.handleLevelCompleted();
     }
@@ -97,29 +104,35 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     _startPos = position.clone();
   }
 
-  /// Removes block from the board
-  void _pickup() {
-    if (block != null) {
-      block?.block = null;
-      boardComponent.board.remove(blockType);
-      block = null;
-    }
-  }
-
   @override
   void onDragEnd(DragEndEvent event) {
     super.onDragEnd(event);
     priority = 0;
     place();
-    if (boardComponent.board.gameState(game.currentLevelConditions ?? []) ==
+    if (boardComponent.board.gameState(game.currentLevel) ==
         LevelCondition.win) {
       game.handleLevelCompleted();
+    }
+
+
+    if (boardComponent.board.gameBoard.values.where((el) => el != null).length >= 5) {
+      game.overlays.add('Hint_btn');
+    } else {
+      game.overlays.remove('Hint_btn');
     }
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    position += event.localDelta;
+    Vector2 tmp = position;
+    tmp += event.localDelta;
+    if (tmp.x >= size.x/2 &&
+         tmp.x + size.x/2 <= game.width &&
+         tmp.y >= size.y/2 &&
+         tmp.y + size.y/2 <= game.size.y
+    ) {
+      position = tmp;
+    }
   }
 
   /// moves block to original position
@@ -136,11 +149,13 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
       BlockComponent closest = getClosestBoardBlock();
       if (!closest.isEmpty()) {
         if (closest.block != this) {
+          game.currentScore += 100;
           _swap(closest.block!);
         } else {
           _returnToStartingPosition();
         }
       } else {
+        game.currentScore += 100;
         move(closest);
       }
     } else if(block != null) {
@@ -255,7 +270,7 @@ enum BlockType {
   const BlockType({
     required this.id,
     required this.nodes,
-  }) : img = 'block$id.png';
+  }) : img = 'block_$id.png';
 
   final int id;
 

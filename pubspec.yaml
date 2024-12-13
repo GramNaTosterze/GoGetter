@@ -1,18 +1,20 @@
 name: go_getter
 description: "implementation of a \"GoGetter\" game from the Smart Games series"
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: '>=3.3.1 <4.0.0'
 
 dependencies:
   flame: ^1.16.0
+  flame_audio: ^2.10.6
   flutter:
     sdk: flutter
   flutter_animate: ^4.5.0
   google_fonts: ^6.2.1
   graphs: ^2.3.2
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:
@@ -22,30 +24,14 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/block1.png
-    - assets/images/block2.png
-    - assets/images/block3.png
-    - assets/images/block4.png
-    - assets/images/block5.png
-    - assets/images/block6.png
-    - assets/images/block7.png
-    - assets/images/block8.png
-    - assets/images/block9.png
-    - assets/images/board.png
-    - assets/images/plansza.bmp
-    - assets/images/thinking.jpg
-    - assets/images/board/u1.png
-    - assets/images/board/u2.png
-    - assets/images/board/u3.png
-    - assets/images/board/r1.png
-    - assets/images/board/r2.png
-    - assets/images/board/r3.png
-    - assets/images/board/l1.png
-    - assets/images/board/l2.png
-    - assets/images/board/l3.png
-    - assets/images/board/d1.png
-    - assets/images/board/d2.png
-    - assets/images/board/d3.png
-    - assets/images/UI/connection.png
-    - assets/images/UI/no_connection.png
+    - assets/images/
+    - assets/images/board/
+    - assets/images/UI/
+    - assets/images/levels/
+    - assets/audio/music/
+    - assets/audio/effects/
+    - assets/levels/starter/
+    - assets/levels/junior/
+    - assets/levels/master/
+    - assets/levels/expert/
 

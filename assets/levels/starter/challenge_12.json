@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "start": "r2",
+      "end": "u2",
+      "shouldConnect": true
+    },
+    {
+      "start": "u2",
+      "end": "l1",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "u3",
+      "shouldConnect": true
+    }
+  ]
+}

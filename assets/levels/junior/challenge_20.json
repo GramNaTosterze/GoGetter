@@ -1,0 +1,29 @@
+{
+  "conditions": [
+    {
+      "start": "r2",
+      "end": "d3",
+      "shouldConnect": true
+    },
+    {
+      "start": "d2",
+      "end": "d3",
+      "shouldConnect": true
+    },
+    {
+      "start": "r2",
+      "end": "l1",
+      "shouldConnect": false
+    },
+    {
+      "start": "d2",
+      "end": "l1",
+      "shouldConnect": false
+    },
+    {
+      "start": "l1",
+      "end": "r3",
+      "shouldConnect": true
+    }
+  ]
+}

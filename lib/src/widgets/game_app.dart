@@ -1,21 +1,21 @@
 import 'package:flame/game.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_getter/src/widgets/level_selection.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:go_getter/src/widgets/settings_screen.dart';
 
 import '../go_getter.dart';
-import 'levels_screen.dart';
+import '../models/Levels/level.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
 
 class GameApp extends StatefulWidget {
-  final List<Map<String, String>> levelConditions;
   final VoidCallback onLevelCompleted;
-  final int selectedLevel;
+  final Level selectedLevel;
 
   const GameApp({
     super.key,
-    required this.levelConditions,
     required this.onLevelCompleted,
     required this.selectedLevel,
   });
@@ -30,42 +30,49 @@ class _GameAppState extends State<GameApp> {
   @override
   void initState() {
     super.initState();
+    if(Settings.musicEnabled) {
+      FlameAudio.bgm.play('music/background.mp3', volume: Settings.volume*0.7);
+    }
     game = GoGetter();
 
     game.onLevelCompleted = () {
       widget.onLevelCompleted();
       game.playState = PlayState.levelCompleted;
+      if (Settings.musicEnabled) {
+        FlameAudio.play('effects/win.mp3', volume: Settings.volume);
+      }
       game.overlays.add(PlayState.levelCompleted.name);
     };
 
-    // Zaktualizowanie stanu przy zmianie poziomu
     game.onLevelChanged = () {
-      setState(() {}); // Wywołanie setState, aby odświeżyć UI
+      setState(() {});
     };
 
-    game.startGame(LevelsScreenState.getLevels(), widget.selectedLevel);
+    game.startGame(widget.selectedLevel);
   }
 
-  void _proceedToNextLevel() {
-    int nextLevel = widget.selectedLevel + 1;
-    if (nextLevel < LevelsScreenState.getLevels().length) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GameApp(
-            levelConditions: LevelsScreenState.getLevels()[nextLevel],
-            onLevelCompleted: () {
-              LevelsScreenState.markLevelAsCompleted(nextLevel);
-            },
-            selectedLevel: nextLevel,
-          ),
+  @override
+  void dispose() {
+    FlameAudio.bgm.stop();
+    // Gdy widget GameApp jest usuwany, wyczyść referencje w GoGetter
+    game.disposeGame();
+    super.dispose();
+  }
+
+  void _proceedToNextLevel() async {
+    await LevelSelectionState.loadNext();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameApp(
+          onLevelCompleted: () {
+            LevelSelectionState.markLevelAsCompleted(LevelSelectionState.currentLevel!.idx);
+          },
+          selectedLevel: LevelSelectionState.currentLevel ?? Level(-1, []),
         ),
-      );
-    } else {
-      if (kDebugMode) {
-        print("Wszystkie poziomy ukończone");
-      }
-    }
+      ),
+    );
   }
 
   KeyEventResult onKeyEvent(
@@ -74,7 +81,7 @@ class _GameAppState extends State<GameApp> {
       ) {
     if (game.playState == PlayState.levelCompleted) {
       if (event.logicalKey == LogicalKeyboardKey.space || event.logicalKey == LogicalKeyboardKey.enter) {
-        _proceedToNextLevel(); // Przejście do kolejnego poziomu po naciśnięciu klawisza
+        _proceedToNextLevel();
         return KeyEventResult.handled;
       }
     }
@@ -107,106 +114,130 @@ class _GameAppState extends State<GameApp> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Focus(
-        autofocus: true,
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              center: Alignment(0.0, 0.35),
-              colors: <Color>[
-                Color(0xff5d97a2),
-                Color(0xff204b5e),
-                Color(0xff204b5e),
-              ],
-              stops: <double>[0.2, 0.5, 0.8],
-              radius: 2.0,
+    int bestScore = LevelSelectionState.bestScores[game.currentLevel.idx] ?? 0;
+    return GestureDetector(
+      onTap: () {
+        if (game.playState == PlayState.levelCompleted) {
+          _proceedToNextLevel();
+
+        }
+      },
+      child: Scaffold(
+        body: Focus(
+          autofocus: true,
+          onKey: (FocusNode node, RawKeyEvent event) {
+            if (game.playState == PlayState.levelCompleted &&
+                (event.logicalKey == LogicalKeyboardKey.space ||
+                    event.logicalKey == LogicalKeyboardKey.enter)) {
+              _proceedToNextLevel();
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment(0.0, 0.35),
+                colors: <Color>[
+                  Color(0xff5d97a2),
+                  Color(0xff204b5e),
+                  Color(0xff204b5e),
+                ],
+                stops: <double>[0.2, 0.5, 0.8],
+                radius: 2.0,
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Container(
-                     decoration: const BoxDecoration(
-                      // gradient: LinearGradient(
-                      //   begin: Alignment.topCenter,
-                      //   end: Alignment.bottomRight,
-                      //   colors: [
-                      //     Color(0xffa9d6e5),
-                      //     Color(0xfff2e8cf),
-                      //   ],
-                      //  ),
-                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Score: 0", // Możesz dynamicznie ustawiać wynik
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              IconButton(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
                                 icon: const Icon(Icons.pause),
                                 onPressed: _showPauseMenu,
                                 color: Colors.white,
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "Warunki ukończenia poziomu:",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
                             ),
-                          ),
-                          // Pobieranie aktualnych warunków poziomu dynamicznie z game.currentLevelConditions
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: (game.currentLevelConditions ?? []).map((condition) {
-                              return Row(
-                                children: [
-                                  Image.asset('assets/images/board/${condition['start']}.png', width: 40, height: 40),
-                                  Image.asset('assets/images/UI/${
-                                      bool.tryParse(condition['no_connection'] ?? 'false') ?? true ? 'no_connection' : 'connection'
-                                  }.png', width: 40, height: 40),
-                                  Image.asset('assets/images/board/${condition['end']}.png', width: 40, height: 40),
-                                ],
-
-                              );
-                            }).toList(),
-                          ),
-                        ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: Settings.showScore ?
+                                  [
+                                  Text(
+                                    "Best Score: $bestScore",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Current Score: ${game.currentScore}",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  ] : [],
+                                ),
+                              ],
+                            ),
+                            displayCondition(),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GameWidget(
-                      game: game,
-                      overlayBuilderMap: {
-                        PlayState.levelCompleted.name: (context, game) =>
-                        const OverlayScreen(
-                          title: "Level Completed",
-                          subtitle: "Press Space or Enter to proceed",
+                    Expanded(
+                      child: Transform.translate(
+                        offset: const Offset(0, 0),
+                        child: GameWidget(
+                          game: game,
+                          overlayBuilderMap: {
+                            PlayState.levelCompleted.name: (context, game) =>
+                            const OverlayScreen(
+                              title: "Level Completed",
+                              subtitle: "Press Space or Enter to proceed",
+                            ),
+                            "Hint_NoMoreMoves": (context, game) =>
+                            const OverlayScreen(
+                              title: "No valid Moves",
+                              subtitle: "Try something different",
+                            ),
+                            "Hint_btn": (context, game) =>
+                                ElevatedButton(
+                                    onPressed: ()=> (game as GoGetter).boardComponent.requestHint(),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.lightbulb,
+                                          color: Colors.white,
+                                        ),
+                                        Text(' '),
+                                        Text('Hint'),
+                                      ],
+                                    ),
+                                ),
+                          },
+                          initialActiveOverlays: const [],
                         ),
-                        "Hint_NoMoreMoves": (context, game) => const OverlayScreen(title: "No valid Moves", subtitle: "Try different approach"),
-                      },
-                      initialActiveOverlays: [],
+                      ),
                     ),
-                  ),
-
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -214,5 +245,36 @@ class _GameAppState extends State<GameApp> {
       ),
     );
   }
-}
 
+  Widget displayCondition() {
+    try {
+      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 200);
+    }
+    catch (_) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: ['u1', 'u2', 'u3', 'd1', 'd2', 'd3', 'r1', 'r2', 'r3', 'l1', 'l2', 'l3']
+            .map((v) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: game.currentLevel.conditions
+                .where((condition) => condition.start == v)
+                .map((condition) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/board/${condition.start}.png', width: 40, height: 40),
+                  Image.asset('assets/images/UI/${
+                      condition.shouldConnect ? 'connection' : 'no_connection'
+                  }.png', width: 40, height: 40),
+                  Image.asset('assets/images/board/${condition.end}.png', width: 40, height: 40),
+                ],
+
+              );
+            }).toList(),
+          );
+        }).toList(),
+      );
+    }
+  }
+}

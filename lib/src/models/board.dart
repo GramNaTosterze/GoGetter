@@ -1,6 +1,7 @@
 import 'package:graphs/graphs.dart';
 
 import '../components/components.dart';
+import 'Levels/level.dart';
 
 ///Board class
 ///
@@ -10,15 +11,15 @@ class Board {
   Map<int, BlockType?> gameBoard = {for (var i = 0; i < 9; i++) i: null};
   Board({required this.nodes});
 
-  Board copy() {
-    Map<String, Set<String>> nodes = {};
-    for (var v in this.nodes.keys) {
-      nodes[v] = Set.from(this.nodes[v]!);
-    }
+  Board.from(Board board) : nodes = {} {
 
-    var copy = Board(nodes: nodes);
-    copy.gameBoard = Map.from(gameBoard);
-    return copy;
+    gameBoard = {for (var i = 0; i < 9; i++) i: board.gameBoard[i]};
+    //gameBoard = Map.from(gameBoard);
+
+
+    for (var v in board.nodes.keys) {
+      nodes[v] = Set.from(board.nodes[v]!);
+    }
   }
 
   /// Swaps block [block1] and [block2]
@@ -140,7 +141,7 @@ class Board {
   /// win meaning that all conditions are met
   /// lose - current board configuration is invalid
   /// none - incomplete board
-  LevelCondition gameState(List<Map<String, String>> levelConditions) {
+  LevelCondition gameState(Level levelConditions) {
     if (_hasDeadEnds()) return LevelCondition.lose;
 
     for (var i = 0; i < 9; i++) {
@@ -149,18 +150,11 @@ class Board {
       }
     }
 
-    for (var condition in levelConditions) {
-      String start = condition['start']!;
-      String end = condition['end']!;
-
-      String noConnection = condition['no_connection'] ?? 'false';
-      bool shouldConnect = !(bool.tryParse(noConnection) ?? false);
-
-      if ( isConnected(start, end) ^ shouldConnect ) {
+    for (var condition in levelConditions.conditions) {
+      if ( isConnected(condition.start, condition.end) ^ condition.shouldConnect ) {
         return LevelCondition.lose;
       }
     }
-
     return LevelCondition.win;
   }
 

@@ -8,9 +8,15 @@ import 'package:flame/input.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_getter/src/models/GameServices/game_service.dart';
+import 'package:go_getter/src/widgets/level_selection.dart';
 import 'components/components.dart';
 import 'config.dart';
 import 'models/models.dart';
+
+import 'dart:async' as dart_async;
+
+
 
 enum PlayState { welcome, playing, levelCompleted }
 
@@ -19,7 +25,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
       : super(
     camera: CameraComponent.withFixedResolution(
       width: gameWidth,
-      height: gameHeight,
+      height: gameHeight * 1.4,
     ),
   );
 
@@ -27,6 +33,9 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   late PlayState _playState;
   late Solver solver;
   late List<PathComponent> pathBlocks;
+  int currentScore = 0;
+  dart_async.Timer? timer;
+
 
   PlayState get playState => _playState;
 
@@ -36,44 +45,66 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   }
 
   VoidCallback? onLevelCompleted;
-  VoidCallback? onLevelChanged; // Nowa funkcja, aby poinformować o zmianie poziomu
+  VoidCallback? onLevelChanged;
 
-  List<Map<String, String>>? currentLevelConditions;
-  late int _currentLevel;
-  List<List<Map<String, String>>> _levels = [];
+  late Level currentLevel;
 
   double get width => size.x;
 
-  double get height => size.y;
+  double get height => size.y /1.4;
 
-  void startGame(List<List<Map<String, String>>> levels, int currentLevel) {
-    _levels = levels;
-    _currentLevel = currentLevel;
+  void startGame(Level currentLevel) {
+    this.currentLevel = currentLevel;
     playState = PlayState.playing;
 
     boardComponent = BoardComponent();
     world.add(boardComponent);
-
-    currentLevelConditions = _levels[_currentLevel];
     // Adding each type of pathblock to the board
     pathBlocks = [
       for (var blockType in BlockType.values)
         PathComponent(
           blockType,
-          position: Vector2(200.0 * blockType.index, 1500.0),
+          position: Vector2(150.0 * blockType.index + 200, 1750.0) + Vector2(0, 250),
           boardComponent: boardComponent,
         )
     ];
     world.addAll(pathBlocks);
 
-    solver = Solver(
+    solver = Solver(pathBlocks: pathBlocks,
+
         board: boardComponent.board,
-        pathBlocks: pathBlocks,
-        levelConditions: currentLevelConditions ?? []
+        levelConditions: currentLevel
     );
+    currentScore = 0;
+    startTimer();
   }
 
+  void startTimer() {
+    timer?.cancel();
+    timer = dart_async.Timer.periodic(const Duration(seconds: 1), (timer) {
+      currentScore += 1;
+      if (onLevelChanged != null) {
+        onLevelChanged!();
+      }
+    });
+
+  }
+
+
+
+  void stopTimer() {
+    timer?.cancel();
+  }
+
+  void disposeGame() {
+    stopTimer();
+    onLevelChanged = null;
+    onLevelCompleted = null;
+  }
+
+
   void stopGame() {
+    stopTimer();
     world.remove(boardComponent);
     // Usunięcie komponentów planszy (BoardComponent)
     if (world.contains(boardComponent)) {
@@ -88,22 +119,39 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     playState = PlayState.welcome;
   }
 
-  void handleLevelCompleted() {
+  void handleLevelCompleted() async {
     playState = PlayState.levelCompleted;
+    stopTimer();
+    if (LevelSelectionState.bestScores[currentLevel.idx] == null ||
+        currentScore < LevelSelectionState.bestScores[currentLevel.idx]!) {
+      LevelSelectionState.bestScores[currentLevel.idx] = currentScore;
+
+    }
+
+    await LevelSelectionState.markLevelAsCompleted(currentLevel.idx);
+    final GameService gameService = GameService();
+    //await gameService.submitScore(currentLevel.idx, LevelSelectionState.bestScores[currentLevel.idx]!);
+    await gameService.submitScore(currentLevel.idx, currentScore);
+
+    await gameService.showLeaderboard(currentLevel.idx);
+
     if (onLevelCompleted != null) {
       onLevelCompleted!();
     }
     overlays.add(PlayState.levelCompleted.name);
   }
 
-  void _proceedToNextLevel() {
+  Future _proceedToNextLevel() async {
     if (playState == PlayState.levelCompleted) {
-      _currentLevel++;
-      if (_currentLevel < _levels.length) {
+      if (LevelSelectionState.currentLevel != null) {
         stopGame();
-        startGame(_levels, _currentLevel);
+
+        await LevelSelectionState.loadNext();
+        currentLevel = LevelSelectionState.currentLevel!;
+
+        startGame(currentLevel);
         if (onLevelChanged != null) {
-          onLevelChanged!(); // Informujemy o zmianie poziomu
+          onLevelChanged!();
         }
       } else {
         if (kDebugMode) {
@@ -121,8 +169,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   KeyEventResult onKeyEvent(KeyEvent event,
       Set<LogicalKeyboardKey> keysPressed) {
     if (playState == PlayState.levelCompleted &&
-        (event.logicalKey == LogicalKeyboardKey.space ||
-            event.logicalKey == LogicalKeyboardKey.enter)) {
+        (event.logicalKey != LogicalKeyboardKey.control)) {
       _proceedToNextLevel();
       return KeyEventResult.handled;
     }
@@ -141,6 +188,6 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
   void reset() {
     stopGame();
-    startGame(_levels, _currentLevel);
+    startGame(currentLevel);
   }
 }

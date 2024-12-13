@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "start": "d2",
+      "end": "u2",
+      "shouldConnect": true
+    },
+    {
+      "start": "l1",
+      "end": "d1",
+      "shouldConnect": true
+    },
+    {
+      "start": "d2",
+      "end": "l1",
+      "shouldConnect": false
+    },
+    {
+      "start": "u2",
+      "end": "d1",
+      "shouldConnect": false
+    }
+  ]
+}

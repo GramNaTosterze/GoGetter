@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_getter/src/widgets/settings_screen.dart';
 
 import '../models/models.dart';
 
@@ -73,12 +75,12 @@ class BoardComponent extends RectangleComponent
     size = Vector2(game.width, game.height);
 
     Vector2 blockSize = size / 6 + Vector2(10, 10);
-    Vector2 start = size / 2 - blockSize;
+    Vector2 start = size / 2 - blockSize + Vector2(0, blockSize.y);
 
     add(SpriteComponent(
-        sprite: Sprite(await game.images.load('plansza.bmp')),
-        position: size / 2,
-        size: size * 0.61,
+        sprite: Sprite(await game.images.load('board.png')),
+        position: size / 2 + Vector2(0, blockSize.y),
+        size: size * 1.07,
         anchor: Anchor.center));
 
 
@@ -97,40 +99,30 @@ class BoardComponent extends RectangleComponent
     ];
 
     addAll(blocks);
-
-    Sprite buttonSprite = Sprite(await game.images.load("thinking.jpg"));
-    add(SpriteButtonComponent(
-      onPressed: () async {
-        var hint = await game.solver.hint();
-        if (hint == null) {
-          game.overlays.add("Hint_NoMoreMoves");
-          Future.delayed(const Duration(seconds: 5),
-                  () => game.overlays.remove("Hint_NoMoreMoves"));
-          return;
-        }
-        var ghostBlock = SpriteComponent(
-            sprite: Sprite(await game.images.load(hint.blockType.img)),
-            position: blocks[hint.place].position,
-        size: blocks[hint.place].size,
-        anchor: Anchor.center,
-        );
-        add(ghostBlock);
-        ghostBlock.opacity = 0.5;
-        ghostBlock.angle += degrees2Radians * 90 * hint.numOfRotations;
-        Future.delayed(const Duration(seconds: 5),
-                () => remove(ghostBlock));
-      },
-      size: Vector2(100, 100),
-      button: buttonSprite,
-      buttonDown: buttonSprite
-    ));
 }
 
-  BoardComponent copy() {
-    BoardComponent copy = BoardComponent();
-    copy.blocks = List.from(blocks);
-    copy.board = board.copy();
-    return copy;
+  Future requestHint() async {
+    var hint = await game.solver.hint();
+    if (hint == null) {
+      FlameAudio.play('effects/no_more_moves.mp3', volume: Settings.volume);
+      game.overlays.add("Hint_NoMoreMoves");
+      Future.delayed(const Duration(seconds: 3),
+              () => game.overlays.remove("Hint_NoMoreMoves"));
+      return;
+    }
+    var ghostBlock = SpriteComponent(
+      sprite: Sprite(await game.images.load(hint.blockType.img)),
+      position: blocks[hint.place].position,
+      size: blocks[hint.place].size,
+      anchor: Anchor.center,
+    );
+    add(ghostBlock);
+    ghostBlock.opacity = 0.5;
+    var currentBlockAngle = game.pathBlocks.where((b) => b.blockType.id == hint.blockType.id).first.sprite.angle;
+    ghostBlock.angle = degrees2Radians * 90 * hint.numOfRotations;
+    ghostBlock.angle += currentBlockAngle;
+    Future.delayed(const Duration(seconds: 5),
+            () => remove(ghostBlock));
   }
 
   Future addObjectSprites(Vector2 start, Vector2 blockSize) async {
