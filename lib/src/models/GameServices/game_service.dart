@@ -18,8 +18,6 @@ abstract class GameService {
   String? get playerId;
 
   Future<bool> signIn();
-  Future<bool> getAuthenticationStatus();
-  Future<String?> getPlayerId();
   Future<bool> saveGame(List<int> completedLevels, Map<int, int> bestScores);
   Future<(List<int>, Map<int,int>)?> loadGame();
   Future submitScore(int level, int score);

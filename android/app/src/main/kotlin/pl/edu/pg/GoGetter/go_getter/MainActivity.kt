@@ -36,7 +36,6 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Jeśli potrzebujesz innej inicjalizacji, dodaj ją tutaj
     }
 
     private fun checkAuthentication(result: MethodChannel.Result) {
@@ -117,7 +116,6 @@ class MainActivity : FlutterActivity() {
                 val snapshot = task.result?.data
                 if (snapshot != null) {
                     val data = snapshot.snapshotContents.readFully()
-                    // Nie zapominaj o zamknięciu snapshotu, jeśli to potrzebne:
                     snapshotClient.discardAndClose(snapshot)
                     result.success(data)
                 } else {
@@ -160,10 +158,7 @@ class MainActivity : FlutterActivity() {
                 result.error("ERROR", "Failed to show leaderboard: ${e.message}", null)
             }
     }
-
-    // Jeśli potrzebujesz obsługi onActivityResult:
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        // Jeśli chcesz obsłużyć powrót z interfejsu leaderboard, możesz to zrobić tutaj
     }
 }

@@ -6,6 +6,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:go_getter/src/widgets/settings_screen.dart';
 
 import '../go_getter.dart';
+import '../models/GameServices/game_service.dart';
 import '../models/Levels/level.dart';
 import 'overlay_screen.dart';
 import 'pause_menu.dart';
@@ -115,8 +116,11 @@ class _GameAppState extends State<GameApp> {
   }
 
 
+
+
   @override
   Widget build(BuildContext context) {
+    final GameService gameService = GameService();
     int bestScore = LevelSelectionState.bestScores[game.currentLevel.idx] ?? 0;
     return GestureDetector(
       onTap: () {
@@ -206,31 +210,163 @@ class _GameAppState extends State<GameApp> {
                         child: GameWidget(
                           game: game,
                           overlayBuilderMap: {
-                            PlayState.levelCompleted.name: (context, game) =>
-                            const OverlayScreen(
-                              title: "Level Completed",
-                              subtitle: "Press Space or Enter to proceed",
-                            ),
-                            "Hint_NoMoreMoves": (context, game) =>
-                            const OverlayScreen(
+                            PlayState.levelCompleted.name: (context, game) {
+                              final currentScore = (game as GoGetter).currentScore;
+                              return Center(
+                                child: Container(
+                                  width: 300,
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color(0xff204b5e),
+                                        Color(0xff5d97a2),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.5),
+                                        blurRadius: 8,
+                                        offset: const Offset(2, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        "Level Completed",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      if (Settings.showScore)
+                                      ...[
+                                      Text(
+                                        "Your Score: $currentScore",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 18, color: Colors.white),
+                                      ),
+                                      Text(
+                                        "Best Score: $bestScore",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 18, color: Colors.white),
+                                      ),
+                                      ],
+                                      const SizedBox(height: 20),
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                                backgroundColor: const Color(0xff5d97a2),
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  side: const BorderSide(color: Colors.white, width: 2),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                _proceedToNextLevel();
+                                              },
+                                              child: const Text("Next Level"),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          SizedBox(
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                                backgroundColor: const Color(0xff5d97a2),
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  side: const BorderSide(color: Colors.white, width: 2),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("Levels"),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          SizedBox(
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                                backgroundColor: const Color(0xff5d97a2),
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  side: const BorderSide(color: Colors.white, width: 2),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("Main Menu"),
+                                            ),
+                                          ),
+                                          if(gameService.isAuthenticated) ...[
+                                            const SizedBox(height: 10),
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                                  backgroundColor: const Color(0xff5d97a2),
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    side: const BorderSide(color: Colors.white, width: 2),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  gameService.showLeaderboard(game.currentLevel.idx);
+                                                },
+                                                child: const Text("Ranking"),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            "Hint_NoMoreMoves": (context, game) => const OverlayScreen(
                               title: "No valid Moves",
                               subtitle: "Try something different",
                             ),
-                            "Hint_btn": (context, game) =>
-                                ElevatedButton(
-                                    onPressed: ()=> (game as GoGetter).boardComponent.requestHint(),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.lightbulb,
-                                          color: Colors.white,
-                                        ),
-                                        Text(' '),
-                                        Text('Hint'),
-                                      ],
-                                    ),
-                                ),
+                            "Hint_btn": (context, game) => ElevatedButton(
+                              onPressed: () => (game as GoGetter).boardComponent.requestHint(),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.lightbulb,
+                                    color: Colors.white,
+                                  ),
+                                  Text(' '),
+                                  Text('Hint'),
+                                ],
+                              ),
+                            ),
                           },
                           initialActiveOverlays: const [],
                         ),

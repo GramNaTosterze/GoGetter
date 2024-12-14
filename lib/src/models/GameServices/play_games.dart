@@ -3,9 +3,11 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:go_getter/src/models/GameServices/game_service.dart';
+import 'package:go_getter/src/models/GameServices/local.dart';
 
 class PlayGamesService implements GameService{
   final MethodChannel _channel = const MethodChannel('play_games_service');
+  final GameService _local = LocalService();
   bool _isAuthentiated = false;
   String? _playerId;
   final Map<int, String> _leaderboard = {
@@ -18,52 +20,33 @@ class PlayGamesService implements GameService{
 
 
   @override
-  bool get isAuthenticated {
-    if (!_isAuthentiated) {
-     getAuthenticationStatus().then((authStatus) {
-       return authStatus;
-     });
-    }
-    return _isAuthentiated;
-  }
+  bool get isAuthenticated => _isAuthentiated;
 
   @override
-  String? get playerId {
-    if (_playerId == null) {
-      getPlayerId().then((id) {
-        return id;
-      });
-    }
-    return _playerId;
-  }
+  String? get playerId => _playerId;
 
   @override
   Future<bool> signIn() async {
-    if (!_isAuthentiated) {
-      return await _channel.invokeMethod('signIn');
+    try {
+      if (!_isAuthentiated) {
+        if (! await _channel.invokeMethod('signIn')) return false;
+        _isAuthentiated = await _channel.invokeMethod('isAuthenticated');
+        _playerId = await _channel.invokeMethod('getPlayerId');
+      }
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+      }
+      return false;
     }
-
-    getAuthenticationStatus();
-    return await _channel.invokeMethod('signIn');
-  }
-
-  @override
-  Future<bool> getAuthenticationStatus() async {
-    _isAuthentiated = await _channel.invokeMethod('isAuthenticated');
-    return _isAuthentiated;
-  }
-
-  @override
-  Future<String?> getPlayerId() async {
-    if (_playerId != null) return _playerId;
-    if (!_isAuthentiated) signIn();
-
-    _playerId = await _channel.invokeMethod('getPlayerId');
-    return _playerId;
   }
 
   @override
   Future<bool> saveGame(List<int> completedLevels, Map<int, int> bestScores) async {
+    if (!_isAuthentiated) return _local.saveGame(completedLevels, bestScores);
+
+
     try {
       final data = {
         "completedLevels": completedLevels,
@@ -82,6 +65,8 @@ class PlayGamesService implements GameService{
 
   @override
   Future<(List<int>, Map<int,int>)?> loadGame() async {
+    if (!_isAuthentiated) return _local.loadGame();
+
     final data = await _channel.invokeMethod('loadGame');
     if (data.isEmpty) return null;
 
@@ -95,6 +80,8 @@ class PlayGamesService implements GameService{
 
   @override
   Future showLeaderboard(int level) async {
+    if (!_isAuthentiated) return;
+
     if (!_leaderboard.containsKey(level)) return;
 
     await _channel.invokeMethod('showLeaderboard', {
@@ -104,6 +91,8 @@ class PlayGamesService implements GameService{
 
   @override
   Future submitScore(int level, int score) async {
+    if (!_isAuthentiated) return;
+
     if (!_leaderboard.containsKey(level)) return;
 
     await _channel.invokeMethod('submitScore', {

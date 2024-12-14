@@ -57,7 +57,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
     // Ładowanie sprite'a
     sprite = SpriteComponent(
-      sprite: Sprite(await game.images.load(blockType.img)),
+      sprite: Sprite(game.images.fromCache(blockType.img)),
       position: size / 2,
       size: size,
       anchor: Anchor.center,

@@ -8,20 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalService implements GameService {
 
   @override
-  bool get isAuthenticated => true;
+  bool get isAuthenticated => false;
 
   @override
-  String? get playerId => "local Player";
-
-  @override
-  Future<bool> getAuthenticationStatus() async {
-    return true;
-  }
-
-  @override
-  Future<String?> getPlayerId() async {
-    return "local Player";
-  }
+  String? get playerId => null;
 
   @override
   Future<(List<int>, Map<int, int>)?> loadGame() async {
