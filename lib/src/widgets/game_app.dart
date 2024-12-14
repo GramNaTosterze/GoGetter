@@ -384,7 +384,7 @@ class _GameAppState extends State<GameApp> {
 
   Widget displayCondition() {
     try {
-      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 200);
+      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 160);
     }
     catch (_) {
       return Row(
