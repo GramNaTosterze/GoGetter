@@ -45,10 +45,6 @@ class _GameAppState extends State<GameApp> {
       game.overlays.add(PlayState.levelCompleted.name);
     };
 
-    game.onLevelChanged = () {
-      setState(() {});
-    };
-
     game.startGame(widget.selectedLevel);
   }
 
@@ -119,6 +115,7 @@ class _GameAppState extends State<GameApp> {
   @override
   Widget build(BuildContext context) {
     int bestScore = LevelSelectionState.bestScores[game.currentLevel.idx] ?? 0;
+    final GameService gameService = GameService();
     return GestureDetector(
       onTap: () {
         if (game.playState == PlayState.levelCompleted) {
@@ -128,16 +125,16 @@ class _GameAppState extends State<GameApp> {
       },
       child: Scaffold(
         body: Focus(
-          autofocus: true,
-          onKey: (FocusNode node, RawKeyEvent event) {
-            if (game.playState == PlayState.levelCompleted &&
-                (event.logicalKey == LogicalKeyboardKey.space ||
-                    event.logicalKey == LogicalKeyboardKey.enter)) {
-              _proceedToNextLevel();
-              return KeyEventResult.handled;
-            }
-            return KeyEventResult.ignored;
-          },
+          // autofocus: true,
+          // onKey: (FocusNode node, RawKeyEvent event) {
+          //   if (game.playState == PlayState.levelCompleted &&
+          //       (event.logicalKey == LogicalKeyboardKey.space ||
+          //           event.logicalKey == LogicalKeyboardKey.enter)) {
+          //     _proceedToNextLevel();
+          //     return KeyEventResult.handled;
+          //   }
+          //   return KeyEventResult.ignored;
+          // },
           child: Container(
             decoration: const BoxDecoration(
               gradient: RadialGradient(
@@ -187,12 +184,14 @@ class _GameAppState extends State<GameApp> {
                                           ),
                                         ),
                                         const SizedBox(height: 8),
-                                        Text(
-                                          "Current Score: ${game.currentScore}",
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                          ),
+                                        ValueListenableBuilder<int>(
+                                          valueListenable: game.currentScoreNotifier,
+                                          builder: (context, value, child) {
+                                            return Text(
+                                              "Current Score: $value",
+                                              style: const TextStyle(fontSize: 18, color: Colors.white),
+                                            );
+                                          },
                                         ),
                                       ] : [],
                                     ),

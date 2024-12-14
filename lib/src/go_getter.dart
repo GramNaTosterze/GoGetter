@@ -33,7 +33,10 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   late PlayState _playState;
   late Solver solver;
   late List<PathComponent> pathBlocks;
-  int currentScore = 0;
+  final ValueNotifier<int> currentScoreNotifier = ValueNotifier<int>(0);
+
+  int get currentScore => currentScoreNotifier.value;
+  set currentScore(int value) => currentScoreNotifier.value = value;
   dart_async.Timer? timer;
 
 
@@ -45,7 +48,6 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   }
 
   VoidCallback? onLevelCompleted;
-  VoidCallback? onLevelChanged;
 
   late Level currentLevel;
 
@@ -82,10 +84,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
   void startTimer() {
     timer?.cancel();
     timer = dart_async.Timer.periodic(const Duration(seconds: 1), (timer) {
-      currentScore += 1;
-      if (onLevelChanged != null) {
-        onLevelChanged!();
-      }
+      currentScoreNotifier.value += 1;
     });
 
   }
@@ -98,7 +97,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
   void disposeGame() {
     stopTimer();
-    onLevelChanged = null;
+    //currentScoreNotifier.dispose();
     onLevelCompleted = null;
   }
 
@@ -150,9 +149,6 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
         currentLevel = LevelSelectionState.currentLevel!;
 
         startGame(currentLevel);
-        if (onLevelChanged != null) {
-          onLevelChanged!();
-        }
       } else {
         if (kDebugMode) {
           print("Wszystkie poziomy ukończone");

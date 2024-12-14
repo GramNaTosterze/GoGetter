@@ -84,7 +84,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
     sprite.angle += degrees2Radians * 90;
     priority = 9;
-    game.currentScore += 100;
+    game.currentScoreNotifier.value += 100;
     boardComponent.board.rotate(blockType);
     if (boardComponent.board.gameState(game.currentLevel) ==
         LevelCondition.win) {
@@ -149,13 +149,13 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
       BlockComponent closest = getClosestBoardBlock();
       if (!closest.isEmpty()) {
         if (closest.block != this) {
-          game.currentScore += 100;
+          game.currentScoreNotifier.value += 100;
           _swap(closest.block!);
         } else {
           _returnToStartingPosition();
         }
       } else {
-        game.currentScore += 100;
+        game.currentScoreNotifier.value += 100;
         move(closest);
       }
     } else if(block != null) {

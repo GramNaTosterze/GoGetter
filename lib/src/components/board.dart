@@ -103,6 +103,7 @@ class BoardComponent extends RectangleComponent
 
   Future requestHint() async {
     var hint = await game.solver.hint();
+    game.currentScoreNotifier.value += 300;
     if (hint == null) {
       FlameAudio.play('effects/no_more_moves.mp3', volume: Settings.volume);
       game.overlays.add("Hint_NoMoreMoves");
