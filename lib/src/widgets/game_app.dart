@@ -116,11 +116,8 @@ class _GameAppState extends State<GameApp> {
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
-    final GameService gameService = GameService();
     int bestScore = LevelSelectionState.bestScores[game.currentLevel.idx] ?? 0;
     return GestureDetector(
       onTap: () {
@@ -219,9 +216,9 @@ class _GameAppState extends State<GameApp> {
                               return Center(
                                 child: Container(
                                   width: 300,
-                                  padding: const EdgeInsets.all(15),
+                                  padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
+                                    gradient: LinearGradient(
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomRight,
                                       colors: [
@@ -251,7 +248,7 @@ class _GameAppState extends State<GameApp> {
                                           color: Colors.white,
                                         ),
                                       ),
-                                      const SizedBox(height: 15),
+                                      const SizedBox(height: 20),
                                       if (Settings.showScore)
                                       ...[
                                       Text(
@@ -265,7 +262,7 @@ class _GameAppState extends State<GameApp> {
                                         style: const TextStyle(fontSize: 18, color: Colors.white),
                                       ),
                                       ],
-                                      const SizedBox(height: 15),
+                                      const SizedBox(height: 20),
                                       Column(
                                         children: [
                                           SizedBox(
@@ -388,7 +385,7 @@ class _GameAppState extends State<GameApp> {
 
   Widget displayCondition() {
     try {
-      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 160);
+      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 200);
     }
     catch (_) {
       return Row(
