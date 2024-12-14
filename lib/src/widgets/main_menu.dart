@@ -33,9 +33,7 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   Future<void> _authenticatePlayer() async {
-    if (! await _gameService.signIn()) {
-      return;
-    }
+    await _gameService.signIn();
     setState(() {});
 
     var levelData = await _gameService.loadGame();

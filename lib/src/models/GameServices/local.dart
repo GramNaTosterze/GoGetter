@@ -11,17 +11,7 @@ class LocalService implements GameService {
   bool get isAuthenticated => false;
 
   @override
-  String? get playerId => "local Player";
-
-  @override
-  Future<bool> getAuthenticationStatus() async {
-    return false;
-  }
-
-  @override
-  Future<String?> getPlayerId() async {
-    return "local Player";
-  }
+  String? get playerId => null;
 
   @override
   Future<(List<int>, Map<int, int>)?> loadGame() async {
