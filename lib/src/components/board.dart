@@ -75,11 +75,11 @@ class BoardComponent extends RectangleComponent
     size = Vector2(game.width, game.height);
 
     Vector2 blockSize = size / 6 + Vector2(10, 10);
-    Vector2 start = size / 2 - blockSize;
+    Vector2 start = size / 2 - blockSize + Vector2(0, blockSize.y);
 
     add(SpriteComponent(
-        sprite: Sprite(await game.images.load('plansza3.png')),
-        position: size / 2,
+        sprite: Sprite(game.images.fromCache('board.png')),
+        position: size / 2 + Vector2(0, blockSize.y),
         size: size * 1.07,
         anchor: Anchor.center));
 
@@ -106,12 +106,12 @@ class BoardComponent extends RectangleComponent
     if (hint == null) {
       FlameAudio.play('effects/no_more_moves.mp3', volume: Settings.volume);
       game.overlays.add("Hint_NoMoreMoves");
-      Future.delayed(const Duration(seconds: 5),
+      Future.delayed(const Duration(seconds: 3),
               () => game.overlays.remove("Hint_NoMoreMoves"));
       return;
     }
     var ghostBlock = SpriteComponent(
-      sprite: Sprite(await game.images.load(hint.blockType.img)),
+      sprite: Sprite(game.images.fromCache(hint.blockType.img)),
       position: blocks[hint.place].position,
       size: blocks[hint.place].size,
       anchor: Anchor.center,
@@ -128,7 +128,7 @@ class BoardComponent extends RectangleComponent
   Future addObjectSprites(Vector2 start, Vector2 blockSize) async {
     for (var i = 0; i < 3; i++) {
       add(SpriteComponent(
-          sprite: Sprite(await game.images.load('board/u${i+1}.png')),
+          sprite: Sprite(game.images.fromCache('board/u${i+1}.png')),
           position: start - Vector2(0, blockSize.y * 1.25) +
               Vector2(blockSize.x * i, 0),
           size: blockSize,
@@ -137,7 +137,7 @@ class BoardComponent extends RectangleComponent
 
       for (var i = 0; i < 3; i++) {
         add(SpriteComponent(
-            sprite: Sprite(await game.images.load('board/d${i+1}.png')),
+            sprite: Sprite(game.images.fromCache('board/d${i+1}.png')),
             position: start + Vector2(0, blockSize.y * 3.25) +
                 Vector2(blockSize.x * i, 0),
             size: blockSize,
@@ -147,7 +147,7 @@ class BoardComponent extends RectangleComponent
 
       for (var i = 0; i < 3; i++) {
         add(SpriteComponent(
-            sprite: Sprite(await game.images.load('board/l${i+1}.png')),
+            sprite: Sprite(game.images.fromCache('board/l${i+1}.png')),
             position: start - Vector2(blockSize.x * 1.25, 0) +
                 Vector2(0, blockSize.y * i),
             size: blockSize,
@@ -157,7 +157,7 @@ class BoardComponent extends RectangleComponent
 
       for (var i = 0; i < 3; i++) {
         add(SpriteComponent(
-            sprite: Sprite(await game.images.load('board/r${i+1}.png')),
+            sprite: Sprite(game.images.fromCache('board/r${i+1}.png')),
             position: start + Vector2(blockSize.x * 3.25, 0) +
                 Vector2(0, blockSize.y * i),
             size: blockSize,

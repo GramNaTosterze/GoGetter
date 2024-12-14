@@ -161,6 +161,14 @@ class _GameAppState extends State<GameApp> {
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: Column(
                           children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: const Icon(Icons.pause),
+                                onPressed: _showPauseMenu,
+                                color: Colors.white,
+                              ),
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -184,11 +192,6 @@ class _GameAppState extends State<GameApp> {
                                     ),
                                   ),
                                   ] : [],
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.pause),
-                                  onPressed: _showPauseMenu,
-                                  color: Colors.white,
                                 ),
                               ],
                             ),

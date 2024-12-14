@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalService implements GameService {
 
   @override
-  bool get isAuthenticated => true;
+  bool get isAuthenticated => false;
 
   @override
   String? get playerId => "local Player";

@@ -40,11 +40,11 @@ class PlayGamesService implements GameService{
   @override
   Future<bool> signIn() async {
     if (!_isAuthentiated) {
-      return await _channel.invokeMethod('signIn');
+      if (! await _channel.invokeMethod('signIn')) return false;
+      _isAuthentiated = await _channel.invokeMethod('isAuthenticated');
+      _playerId = await _channel.invokeMethod('getPlayerId');
     }
-
-    getAuthenticationStatus();
-    return await _channel.invokeMethod('signIn');
+    return true;
   }
 
   @override

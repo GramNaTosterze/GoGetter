@@ -57,7 +57,7 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
 
     // Ładowanie sprite'a
     sprite = SpriteComponent(
-      sprite: Sprite(await game.images.load(blockType.img)),
+      sprite: Sprite(game.images.fromCache(blockType.img)),
       position: size / 2,
       size: size,
       anchor: Anchor.center,
@@ -127,9 +127,9 @@ class PathComponent extends BlockComponent with DragCallbacks, TapCallbacks {
     Vector2 tmp = position;
     tmp += event.localDelta;
     if (tmp.x >= size.x/2 &&
-         tmp.x + size.x/2 <= 1600 &&
+         tmp.x + size.x/2 <= game.width &&
          tmp.y >= size.y/2 &&
-         tmp.y + size.y/2 <= 1900
+         tmp.y + size.y/2 <= game.size.y
     ) {
       position = tmp;
     }
@@ -270,7 +270,7 @@ enum BlockType {
   const BlockType({
     required this.id,
     required this.nodes,
-  }) : img = 'blockv2_$id.png';
+  }) : img = 'block_$id.png';
 
   final int id;
 
