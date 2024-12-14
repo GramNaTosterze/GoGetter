@@ -15,7 +15,7 @@ class LocalService implements GameService {
 
   @override
   Future<bool> getAuthenticationStatus() async {
-    return true;
+    return false;
   }
 
   @override

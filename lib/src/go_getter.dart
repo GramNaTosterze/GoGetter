@@ -133,7 +133,7 @@ class GoGetter extends FlameGame with HasCollisionDetection, KeyboardEvents {
     //await gameService.submitScore(currentLevel.idx, LevelSelectionState.bestScores[currentLevel.idx]!);
     await gameService.submitScore(currentLevel.idx, currentScore);
 
-    await gameService.showLeaderboard(currentLevel.idx);
+    //await gameService.showLeaderboard(currentLevel.idx);
 
     if (onLevelCompleted != null) {
       onLevelCompleted!();
