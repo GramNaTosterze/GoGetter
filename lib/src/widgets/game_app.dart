@@ -165,37 +165,41 @@ class _GameAppState extends State<GameApp> {
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: Column(
                           children: [
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: IconButton(
-                                icon: const Icon(Icons.pause),
-                                onPressed: _showPauseMenu,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Stack(
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: Settings.showScore ?
-                                  [
-                                  Text(
-                                    "Best Score: $bestScore",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                    ),
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.pause),
+                                    onPressed: _showPauseMenu,
+                                    color: Colors.white,
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    "Current Score: ${game.currentScore}",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: Settings.showScore ?
+                                      [
+                                        Text(
+                                          "Best Score: $bestScore",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          "Current Score: ${game.currentScore}",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ] : [],
                                     ),
-                                  ),
-                                  ] : [],
+                                  ],
                                 ),
                               ],
                             ),
@@ -215,9 +219,9 @@ class _GameAppState extends State<GameApp> {
                               return Center(
                                 child: Container(
                                   width: 300,
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.all(15),
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
+                                    gradient: const LinearGradient(
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomRight,
                                       colors: [
@@ -247,7 +251,7 @@ class _GameAppState extends State<GameApp> {
                                           color: Colors.white,
                                         ),
                                       ),
-                                      const SizedBox(height: 20),
+                                      const SizedBox(height: 15),
                                       if (Settings.showScore)
                                       ...[
                                       Text(
@@ -261,7 +265,7 @@ class _GameAppState extends State<GameApp> {
                                         style: const TextStyle(fontSize: 18, color: Colors.white),
                                       ),
                                       ],
-                                      const SizedBox(height: 20),
+                                      const SizedBox(height: 15),
                                       Column(
                                         children: [
                                           SizedBox(
@@ -384,7 +388,7 @@ class _GameAppState extends State<GameApp> {
 
   Widget displayCondition() {
     try {
-      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 200);
+      return Image.asset('assets/images/levels/${game.currentLevel.idx}.png', width: 200, height: 160);
     }
     catch (_) {
       return Row(
