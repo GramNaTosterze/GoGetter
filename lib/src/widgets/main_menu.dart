@@ -36,6 +36,7 @@ class _MainMenuState extends State<MainMenu> {
     if (! await _gameService.signIn()) {
       return;
     }
+    setState(() {});
 
     var levelData = await _gameService.loadGame();
     if (levelData != null) {
@@ -66,11 +67,6 @@ class _MainMenuState extends State<MainMenu> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (_gameService.isAuthenticated && _gameService.playerId != null)
-                Text(
-                  'Hello, Player ID: ${_gameService.playerId}',
-                  style: const TextStyle(color: Colors.white),
-                ),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
